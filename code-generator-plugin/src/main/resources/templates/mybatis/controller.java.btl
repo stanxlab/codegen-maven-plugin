@@ -1,0 +1,78 @@
+package ${package.Controller};
+
+<% if(entityLombokModel){ %>
+import lombok.extern.slf4j.Slf4j;
+<% } %>
+import javax.validation.Valid;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+<% if(restControllerStyle){ %>
+import org.springframework.web.bind.annotation.RestController;
+<% }else{ %>
+import org.springframework.stereotype.Controller;
+<% } %>
+<% if(isNotEmpty(superControllerClassPackage)){ %>
+import ${superControllerClassPackage};
+<% } %>
+import ${package.Entity}.${entity};
+import ${package.Service}.${table.serviceName};
+import lombok.RequiredArgsConstructor;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.List;
+
+/**
+ * <p>
+ * ${table.comment!} Controller
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(entityLombokModel){ %>
+@Slf4j
+<% } %>
+@Validated
+<% if(restControllerStyle){ %>
+@RestController
+<% }else{ %>
+@Controller
+<% } %>
+@RequestMapping("<% if(isNotEmpty(moduleName)){ %>/${moduleName}<% } %>/${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}")
+@RequiredArgsConstructor
+public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>extends ${superControllerName}<% } %> {
+
+    private final ${table.serviceName} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Service;
+
+    @ApiOperation("详情")
+    @GetMapping("/detail")
+    public ${entity} getById(@RequestParam Long id) {
+        return ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Service.getById(id);
+    }
+
+    @ApiOperation("新增")
+    @PostMapping("/add")
+    public void add(@Valid @RequestBody ${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}) {
+        ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Service.save(${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+    }
+
+    @ApiOperation("更新")
+    @PostMapping("/update")
+    public void update(@Valid @RequestBody ${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}) {
+        ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Service.updateById(${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+    }
+
+    @ApiOperation("删除")
+    @PostMapping("/delete")
+    public void delete(@RequestParam Long id) {
+        ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Service.deleteById(id);
+    }
+
+}

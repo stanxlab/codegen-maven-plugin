@@ -1,0 +1,34 @@
+package ${package.ServiceImpl};
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${cfg.managerPackage}.${entity}Manager;
+#if(${generateService})
+import ${package.Service}.${table.serviceName};
+#end
+import ${superServiceImplClassPackage};
+import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Slf4j
+@Service
+@RequiredArgsConstructor
+#if(${kotlin})
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>()#if(${generateService}), ${table.serviceName}#end {
+
+}
+#else
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}>#if(${generateService}) implements ${table.serviceName}#end {
+    private final ${entity}Manager ${lowEntityName}Manager;
+
+}
+#end

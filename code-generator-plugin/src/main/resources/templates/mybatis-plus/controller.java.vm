@@ -1,0 +1,80 @@
+package ${package.Controller};
+
+import ${package.Entity}.${entity};
+import ${facadePackage}.dto.${entity}DTO;
+import ${package.Service}.${table.serviceName};
+import ${cfg.managerPackage}.converter.${entity}Converter;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import ${parentPackage}.common.CommonResult;
+import javax.validation.Valid;
+#if(!${restControllerStyle})
+import org.springframework.stereotype.Controller;
+#end
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Slf4j
+@RequiredArgsConstructor
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+    private final ${table.serviceName} ${lowEntityName}Service;
+
+#if($enableCrudCode)
+    @ApiOperation("获取分页")
+    @GetMapping("/page")
+    public CommonResult<IPage<${entity}>> page(@RequestParam(name = "pageNo", defaultValue = "1", required = false) Long pageNo,
+                                              @RequestParam(name = "pageSize", defaultValue = "10", required = false) Long pageSize)  {
+        IPage<${entity}> res = ${lowEntityName}Service.page(new Page<>(pageNo, pageSize));
+        return CommonResult.success(res);
+    }
+
+    @ApiOperation("获取详情")
+    @GetMapping("/detail")
+    public CommonResult<${entity}DTO> detail(@RequestParam("id") Long id) {
+        ${entity} res = ${lowEntityName}Service.getById(id);
+        return CommonResult.success(${entity}Converter.INSTANCE.to${entity}DTO(res));
+    }
+
+    @ApiOperation("新增")
+    @PostMapping("/add")
+    public void add(@Valid @RequestBody ${entity}DTO ${lowEntityName}DTO) {
+        ${lowEntityName}Service.save(${entity}Converter.INSTANCE.to${entity}(${lowEntityName}DTO));
+    }
+
+    @ApiOperation("更新")
+    @PostMapping("/update")
+    public void update(@Valid @RequestBody ${entity}DTO ${lowEntityName}DTO) {
+        ${lowEntityName}Service.updateById(${entity}Converter.INSTANCE.to${entity}(${lowEntityName}DTO));
+    }
+
+    @ApiOperation("删除")
+    @PostMapping("/delete")
+    public void delete(@RequestParam("id") Long id) {
+        ${lowEntityName}Service.removeById(id);
+    }
+#end
+}
+

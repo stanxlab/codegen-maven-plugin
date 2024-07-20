@@ -1,0 +1,71 @@
+package ${package.Entity};
+
+
+<% if(isNotEmpty(superEntityClassPackage)){ %>
+import ${superEntityClassPackage};
+<% }else{ %>
+import java.io.Serializable;
+<% } %>
+import io.mybatis.provider.Entity;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+/**
+ * ${table.comment!}
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+<% if(isNotEmpty(superEntityClass)){ %>
+@EqualsAndHashCode(callSuper = true)
+<% }else{ %>
+@EqualsAndHashCode(callSuper = false)
+<% } %>
+@Entity.Table(value = "${table.name}", autoResultMap = true)
+<% if(isNotEmpty(superEntityClass)){ %>
+public class ${entity} extends ${superEntityClass} {
+<% }else{ %>
+public class ${entity} implements Serializable {
+<% } %>
+
+<% if(entitySerialVersionUID){ %>
+    private static final long serialVersionUID = 1L;
+<% } %>
+<% /** -----------BEGIN 字段循环遍历----------- **/ %>
+<% for(field in table.fields){ %>
+
+    <% if(isNotEmpty(field.comment) && false){ %>
+    /**
+     * ${field.comment!} -- 不显示这个信息
+     * //@Entity.Column(value = "${field.propertyName}", remark = "${field.comment!}")
+     */
+    <% } %>
+    <% if('id' == field.propertyName){ %>
+    @Entity.Column(value = "${field.propertyName}", id = true, remark = "${field.comment!}")
+    <% }else{ %>
+        <% if(isNotEmpty(field.comment)){ %>
+    @ApiModelProperty("${field.comment}")
+        <% }else{ %>
+    @ApiModelProperty("${field.propertyName}")
+        <% } %>
+    <% } %>
+    <% if('LocalDateTime' == field.propertyType){ %>
+    private java.util.Date ${field.propertyName};
+    <% }else if('BigDecimal' == field.propertyType){ %>
+    private java.math.BigDecimal ${field.propertyName};
+    <% }else{ %>
+    private ${field.propertyType} ${field.propertyName};
+    <% } %>
+<% } %>
+<% /** -----------END 字段循环遍历----------- **/ %>
+
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+    <!--######################### 模板生成部分 start #########################-->
+<% if(enableCache){ %>
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+<% } %>
+<% if(baseResultMap){ %>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+<% for(field in table.fields){ %>
+   <% /** 生成主键排在第一位 **/ %>
+   <% if(field.keyFlag){ %>
+        <id column="${field.name}" property="${field.propertyName}"/>
+   <% } %>
+<% } %>
+<% for(field in table.commonFields){ %>
+    <% /** 生成公共字段 **/ %>
+        <result column="${field.name}" property="${field.propertyName}"/>
+<% } %>
+<% for(field in table.fields){ %>
+   <% /** 生成普通字段 **/ %>
+   <% if(!field.keyFlag){ %>
+        <result column="${field.name}" property="${field.propertyName}"/>
+   <% } %>
+<% } %>
+    </resultMap>
+<% } %>
+
+<% if(baseColumnList){ %>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+<% for(field in table.fields){ %>
+    <% if(!fieldLP.last){ %>
+        a.`${field.name}`,
+    <% } %>
+    <% if(fieldLP.last){ %>
+        a.`${field.name}`
+    <% } %>
+<% } %>
+    </sql>
+
+     <!-- 通用查询结果列，带别名 -->
+     <sql id="Base_Columns_With_Alias">
+ <% for(field in table.fields){ %>
+     <% if(!fieldLP.last){ %>
+         a.`${field.name}` AS AS ${field.propertyName},
+     <% } %>
+     <% if(fieldLP.last){ %>
+         a.`${field.name}` AS ${field.propertyName}
+     <% } %>
+ <% } %>
+     </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Where_Condition">
+        <trim prefix="WHERE" prefixOverrides="and ">
+            <% for(field in table.fields){ %>
+            <if test="${field.propertyName} != null<% if(field.columnType=="STRING"){ %> and ${field.propertyName} != ''<%}%>">
+                and a.`${field.name}` = #{${field.propertyName}}
+            </if>
+            <% } %>
+        </trim>
+    </sql>
+
+    <!-- 基础查询预计片段 -->
+    <sql id="Select_Common_Tpl">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM `${table.name}` AS a
+    </sql>
+    <sql id="Select_Count_Tpl">
+        SELECT count(*) AS `count` FROM `${table.name}` AS a
+    </sql>
+    <sql id="Delete_Common_Tpl">
+        DELETE FROM `${table.name}`
+    </sql>
+<% } %>
+    <!--######################### /以上是模板生成部分 end #########################-->
+
+    <!--================================== 自定义SQL写到这下面 ==================================-->
+
+
+
+
+
+</mapper>

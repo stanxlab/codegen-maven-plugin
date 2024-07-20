@@ -1,0 +1,36 @@
+server:
+  port: 8090
+
+spring:
+  profiles:
+    active: local
+  application:
+    name: ${baseProjectName}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    url: ${dbInfo.url}
+    username: ${dbInfo.username}
+    password: ${dbInfo.password}
+
+<% if(ormName == 'mybatis-plus') { %>
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/${xmlPath}/*.xml
+  typeAliasesPackage: ${entityPackage}
+  # 测试环境打印sql
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+<% } else if(ormName == 'mybatis') { %>
+# mybatis
+mybatis:
+  mapper-locations: classpath*:/${xmlPath}/*.xml
+  typeAliasesPackage: ${entityPackage}
+  # 测试环境打印sql
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+<% } %>
+

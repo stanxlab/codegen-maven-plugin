@@ -1,0 +1,25 @@
+package ${cfg.managerImplPackage};
+
+import ${package.Mapper}.${table.mapperName};
+import ${cfg.managerPackage}.${entity}Manager;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+/**
+ * <p>
+ * ${table.comment!} Manager实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class ${entity}ManagerImpl implements ${entity}Manager {
+
+    private final ${table.mapperName} ${lowMapperName};
+
+
+}

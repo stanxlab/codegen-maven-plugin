@@ -1,0 +1,25 @@
+package ${package.Service};
+
+import ${package.Entity}.${entity};
+import java.util.List;
+
+/**
+ * <p>
+ * ${table.comment!} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+public interface ${table.serviceName} {
+
+    ${entity} getById(Long id);
+
+    List<${entity}> list(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+
+    void save(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+
+    void updateById(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+
+    void deleteById(Long id);
+}

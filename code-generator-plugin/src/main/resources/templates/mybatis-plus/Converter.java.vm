@@ -1,0 +1,24 @@
+package ${cfg.managerPackage}.converter;
+
+
+import ${package.Entity}.${entity};
+import ${facadePackage}.dto.${entity}DTO;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
+
+@Mapper
+public interface ${entity}Converter {
+    ${entity}Converter INSTANCE = Mappers.getMapper(${entity}Converter.class);
+
+    // 格式转换
+    //@Mappings({
+    //        @Mapping(source = "id", target = "id"),
+    //        @Mapping(source = "createTime", target = "createTime", dateFormat = DatePattern.NORM_DATETIME_PATTERN)
+    //})
+    ${entity}DTO to${entity}DTO(${entity} model);
+
+    ${entity} to${entity}(${entity}DTO model);
+
+}

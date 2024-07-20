@@ -1,0 +1,55 @@
+package ${package.ServiceImpl};
+
+<% if(entityLombokModel){ %>
+import lombok.extern.slf4j.Slf4j;
+<% } %>
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+
+/**
+ * <p>
+ * ${table.comment!} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(entityLombokModel){ %>
+@Slf4j
+<% } %>
+@Service
+@RequiredArgsConstructor
+public class ${table.serviceImplName} implements ${table.serviceName} {
+
+    private final ${entity}Mapper ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Mapper;
+
+    @Override
+    public ${entity} getById(Long id) {
+        return ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Mapper.getById(id);
+    }
+
+    @Override
+    public List<${entity}> list(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}) {
+        return ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Mapper.selectList(${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+    }
+
+    @Override
+    public void save(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}) {
+        ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Mapper.insert(${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+    }
+
+    @Override
+    public void updateById(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}) {
+        ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Mapper.updateById(${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)}Mapper.deleteById(id);
+    }
+}
