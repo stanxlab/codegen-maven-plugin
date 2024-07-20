@@ -89,5 +89,4 @@ public abstract class BaseGeneratorMojo extends AbstractMojo {
         }
         return false;
     }
-
 }

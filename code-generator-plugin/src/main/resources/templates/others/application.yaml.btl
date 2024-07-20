@@ -34,3 +34,24 @@ mybatis:
 
 <% } %>
 
+knife4j:
+  enable: true
+  production: false
+  basic:
+    enable: false
+    username: admin
+    password: 123456
+  openapi:
+      title: 示例项目文档
+      description: "项目简介"
+      concat: stanxlab
+      version: v1.0
+      group:
+        default:
+          group-name: default
+          api-rule: package
+          api-rule-resources:
+            - com.stanxlab
+
+
+

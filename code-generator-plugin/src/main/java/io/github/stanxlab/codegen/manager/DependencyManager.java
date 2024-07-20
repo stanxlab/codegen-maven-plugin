@@ -28,7 +28,7 @@ public class DependencyManager {
     {
         MYBATIS_DEPENDENCY_MAP.put(ModuleNameEnum.COMMON, new String[][]{
                 {"org.projectlombok", "lombok", "${lombok.version}"},
-                {"io.swagger", "swagger-annotations", "${swagger.version}"},
+                {"io.swagger", "swagger-annotations", "${swagger-annotations.version}"},
                 {"org.mapstruct", "mapstruct-processor", "${mapstruct.version}", "compile"},
                 {"org.mapstruct", "mapstruct", "${mapstruct.version}", "compile"},
         });
@@ -58,6 +58,7 @@ public class DependencyManager {
         MYBATIS_DEPENDENCY_MAP.put(ModuleNameEnum.WEB, new String[][]{
                 {ModuleNameEnum.SERVICE.name()},
                 {"org.springframework.boot", "spring-boot-starter-web", "${spring-boot.version}"},
+                {"com.github.xiaoymin", "knife4j-openapi2-spring-boot-starter", "${knife4j-openapi2-spring-boot-starter}"},
                 {"org.mybatis.spring.boot", "mybatis-spring-boot-starter", "${mybatis-spring-boot-starter.version}"},
         });
 
@@ -75,7 +76,7 @@ public class DependencyManager {
     {
         MP_DEPENDENCY_MAP.put(ModuleNameEnum.COMMON, new String[][]{
                 {"org.projectlombok", "lombok", "${lombok.version}"},
-                {"io.swagger", "swagger-annotations", "${swagger.version}"},
+                {"io.swagger", "swagger-annotations", "${swagger-annotations.version}"},
                 {"org.mapstruct", "mapstruct-processor", "${mapstruct.version}", "compile"},
                 {"org.mapstruct", "mapstruct", "${mapstruct.version}", "compile"},
         });
@@ -103,6 +104,7 @@ public class DependencyManager {
         MP_DEPENDENCY_MAP.put(ModuleNameEnum.WEB, new String[][]{
                 {ModuleNameEnum.SERVICE.name()},
                 {"org.springframework.boot", "spring-boot-starter-web", "${spring-boot.version}"},
+                {"com.github.xiaoymin", "knife4j-openapi2-spring-boot-starter", "${knife4j-openapi2-spring-boot-starter}"},
                 {"com.baomidou", "mybatis-plus-boot-starter", "${mybatis-plus.version}"},
         });
 

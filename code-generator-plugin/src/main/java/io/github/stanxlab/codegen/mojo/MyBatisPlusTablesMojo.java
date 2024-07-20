@@ -5,7 +5,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
-@Mojo(name = "mybatis-plus-tables")
+/**
+ * mybatis-plus 表实体类生成
+ */
+@Mojo(name = "mybatis-plus:tables")
 public class MyBatisPlusTablesMojo extends BaseGeneratorMojo {
 
     @Override

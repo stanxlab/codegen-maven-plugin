@@ -8,7 +8,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 /**
  * mybatis初始化项目
  */
-@Mojo(name = "mybatis-init")
+@Mojo(name = "mybatis:init-project")
 public class MyBatisInitMojo extends BaseGeneratorMojo {
 
     @Override

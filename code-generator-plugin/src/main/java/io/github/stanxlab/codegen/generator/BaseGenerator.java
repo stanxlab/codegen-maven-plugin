@@ -163,7 +163,8 @@ public abstract class BaseGenerator {
     private TemplateTypeEnum getTemplateType() {
         TemplateTypeEnum templateType = this.projectInfo.getParameters().getTemplateType();
         if (null == templateType) {
-            templateType = TemplateTypeEnum.velocity;
+            // 默认使用beetl模版
+            templateType = TemplateTypeEnum.beetl;
         }
         return templateType;
     }
@@ -184,9 +185,11 @@ public abstract class BaseGenerator {
 
         customMap.put("enableCrudCode", this.projectInfo.getParameters().isEnableCrudCode());
         customMap.put("parentPackage", packageConfig.getParent());
+        customMap.put("commonPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getCommon());
         customMap.put("managerPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getManager());
         customMap.put("managerImplPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getManagerImpl());
         customMap.put("facadePackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getFacade());
+        customMap.put("isDefaultSuperMapper", packageConfig.isDefaultSuperMapper());
 
         List<CustomFile> list = new ArrayList<>();
 

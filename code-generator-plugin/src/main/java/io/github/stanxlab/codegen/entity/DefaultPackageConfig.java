@@ -6,7 +6,6 @@ import io.github.stanxlab.codegen.enums.TemplateFilesEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 @Data
@@ -66,6 +65,11 @@ public class DefaultPackageConfig {
      */
     private boolean enableManager = true;
 
+    /**
+     * 是否使用默认的BaseMapper
+     */
+    private boolean isDefaultSuperMapper = false;
+
     public void init(ORMTypeEnum ormType) {
         if (StringUtils.isNotEmpty(this.daoModuleName) && !this.entity.contains(this.daoModuleName)) {
             this.entity = this.daoModuleName + "." + this.entity;
@@ -103,9 +107,11 @@ public class DefaultPackageConfig {
 
     private void initMybatis() {
         if (StringUtils.isEmpty(this.superMapperClass)) {
-            // BaseMapper
-            this.superMapperClass = this.parent + "." + this.common + "." +
-                    TemplateFilesEnum.BASE_MAPPER.getFileName().split(".")[0];
+            // default BaseMapper
+//            this.superMapperClass = this.parent + "." + this.common + "." +
+//                    TemplateFilesEnum.BASE_MAPPER.getFileName().split("\\.")[0];
+            this.superMapperClass = "io.mybatis.mapper.BaseMapper";
+            this.isDefaultSuperMapper = true;
         }
     }
 

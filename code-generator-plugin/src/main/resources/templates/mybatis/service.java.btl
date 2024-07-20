@@ -13,13 +13,13 @@ import java.util.List;
  */
 public interface ${table.serviceName} {
 
+    List<${entity}> list();
+
     ${entity} getById(Long id);
 
-    List<${entity}> list(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+    void save(${entity} ${lowEntityName});
 
-    void save(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
+    void updateById(${entity} ${lowEntityName});
 
-    void updateById(${entity} ${@cn.hutool.core.util.StrUtil.lowerFirst(entity)});
-
-    void deleteById(Long id);
+    void removeById(Long id);
 }

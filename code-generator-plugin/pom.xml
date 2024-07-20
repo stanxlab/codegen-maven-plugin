@@ -6,15 +6,19 @@
 
     <groupId>io.github.stanxlab</groupId>
     <artifactId>codegen</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
+    <name>codegen</name>
+    <description>代码生成器maven插件，用于初始化多模块spring项目，以及生成模版代码，支持mybatis和mybtis-plus。</description>
 
     <properties>
+        <serverId>central</serverId>
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <mysql-connector-java.version>8.0.25</mysql-connector-java.version>
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
@@ -132,6 +136,14 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <!-- 与settings.xml的server.id保持一致 -->
+            <id>${serverId}</id>
+            <url>https://central.sonatype.com/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -140,6 +152,7 @@
                 <version>3.6.0</version>
             </plugin>
 
+            <!-- 编译插件，设置源码以及编译的jdk版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -199,6 +212,59 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <!-- Gpg Signature -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <!--项目访问url -->
+    <url>https://github.com/stanxlab/codegen-maven-plugin</url>
+    <scm>
+        <!--项目访问url -->
+        <url>https://github.com/stanxlab/codegen-maven-plugin</url>
+        <!--项目访问url.git结尾 -->
+        <connection>scm:git:https://github.com/stanxlab/codegen-maven-plugin.git</connection>
+        <!--项目访问url.git结尾 -->
+        <developerConnection>scm:git:https://github.com/stanxlab/codegen-maven-plugin.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>stanxlab</id>
+            <name>stanxlab</name>
+            <email>stanxlab@gmail.com</email>
+            <!--项目访问url -->
+            <url>https://github.com/stanxlab/codegen-maven-plugin</url>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 </project>

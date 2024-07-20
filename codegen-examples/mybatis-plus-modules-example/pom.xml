@@ -19,11 +19,11 @@
             <plugin>
                 <groupId>io.github.stanxlab</groupId>
                 <artifactId>codegen</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>1.0.1</version>
                 <configuration>
                     <parameters>
                         <outputPackage>com.stanxlab.demo</outputPackage>
-                        <baseProjectName>demo3</baseProjectName>
+                        <baseProjectName>zxlab</baseProjectName>
                         <tables>all</tables>
                         <packageConfig>
                             <!--                            <parent>io.github.stanxlab.demo</parent>-->

@@ -3,19 +3,20 @@ package io.github.stanxlab.codegen.generator;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import io.github.stanxlab.codegen.entity.DbInfo;
-import io.github.stanxlab.codegen.entity.Parameters;
-import io.github.stanxlab.codegen.entity.ProjectInfo;
+import io.github.stanxlab.codegen.entity.DefaultPackageConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @Slf4j
 public abstract class BaseTest {
-
 
     protected DbInfo dbInfo;
 
@@ -42,6 +43,24 @@ public abstract class BaseTest {
         baseDir = new File(basedirPath);
     }
 
+
+    @Test
+    void testConfig() {
+        DefaultPackageConfig defaultPackageConfig = new DefaultPackageConfig();
+        System.out.println(defaultPackageConfig);
+        assertEquals("dao", defaultPackageConfig.getDaoModuleName());
+    }
+
+    @Test
+    void test() {
+        String username = System.getenv("user.name");
+        System.out.println(username);
+        String basedirPath = System.getProperty("basedir");
+        System.out.println(basedirPath);
+
+        System.out.println(baseDir.getParentFile().getAbsolutePath());
+    }
+
     protected Path getRandomPath() {
         // 创建临时目录，用于测试
         String tmpSubPath = "tmp-" + DateUtil.format(new DateTime(), "HHmmss");
@@ -52,8 +71,6 @@ public abstract class BaseTest {
     protected Path getFixedPath() {
         String tmpSubPath = "tmp_11";
         String parentBasePath = baseDir.getParentFile().getAbsolutePath();
-        Path path = Paths.get(parentBasePath, tmpSubPath);
-        return path;
+        return Paths.get(parentBasePath, tmpSubPath);
     }
-
 }

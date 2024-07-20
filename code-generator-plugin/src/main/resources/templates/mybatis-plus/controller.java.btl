@@ -5,10 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 <% } %>
 import javax.validation.Valid;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ${commonPackage}.CommonResult;
 import ${facadePackage}.dto.${entity}DTO;
 import ${managerPackage}.converter.${entity}Converter;
+<% if(restControllerStyle){ %>
+import org.springframework.web.bind.annotation.RestController;
+<% }else{ %>
+import org.springframework.stereotype.Controller;
+<% } %>
 <% if(isNotEmpty(superControllerClassPackage)){ %>
 import ${superControllerClassPackage};
 <% } %>
@@ -72,5 +79,4 @@ public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>exten
     public void delete(@RequestParam Long id) {
         ${lowEntityName}Service.removeById(id);
     }
-
 }
