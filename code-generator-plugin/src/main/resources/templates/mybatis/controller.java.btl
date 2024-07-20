@@ -1,9 +1,7 @@
 package ${package.Controller};
 
-<% if(entityLombokModel){ %>
-import lombok.extern.slf4j.Slf4j;
-<% } %>
-import javax.validation.Valid;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ${commonPackage}.CommonResult;
@@ -14,8 +12,10 @@ import ${superControllerClassPackage};
 <% } %>
 import ${package.Entity}.${entity};
 import ${package.Service}.${table.serviceName};
-import lombok.RequiredArgsConstructor;
+import javax.validation.Valid;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -27,20 +27,22 @@ import java.util.List;
  * @author ${author}
  * @since ${date}
  */
-<% if(entityLombokModel){ %>
 @Slf4j
-<% } %>
 @Validated
-<% if(restControllerStyle){ %>
 @RestController
-<% }else{ %>
-@Controller
-<% } %>
 @RequestMapping("<% if(isNotEmpty(moduleName)){ %>/${moduleName}<% } %>/${lowEntityName}")
 @RequiredArgsConstructor
 public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>extends ${superControllerName}<% } %> {
 
     private final ${table.serviceName} ${lowEntityName}Service;
+
+    @ApiOperation("获取分页")
+    @GetMapping("/page")
+    public CommonResult<PageInfo<${entity}>> page(@RequestParam(name = "pageNo", defaultValue = "1", required = false) Integer pageNo,
+                                              @RequestParam(name = "pageSize", defaultValue = "10", required = false) Integer pageSize)  {
+        PageInfo<${entity}> res = ${lowEntityName}Service.page(pageNo, pageSize);
+        return CommonResult.success(res);
+    }
 
     @ApiOperation("列表")
     @GetMapping("/list")

@@ -118,6 +118,7 @@ public class PomGenerator extends BaseGenerator {
         context.put("groupId", this.projectInfo.getParameters().getOutputPackage());
         context.put("artifactId", moduleName);
         context.put("isParent", false);
+        context.put("multiModule", this.projectInfo.getParameters().isMultiModule());
         context.put("parentArtifactId", this.projectInfo.getBaseProjectName());
 
         context.put("isStartModule", moduleNameEnum.equals(ModuleNameEnum.WEB));

@@ -108,7 +108,15 @@ public class ${entity} {
     <% if(field.logicDeleteField){ %>
     @TableLogic
     <% } %>
+    <% if('LocalDateTime' == field.propertyType){ %>
+    private java.util.Date ${field.propertyName};
+    <% }else if('BigDecimal' == field.propertyType){ %>
+    private java.math.BigDecimal ${field.propertyName};
+    <% }else if('Byte' == field.propertyType){ %>
+    private Integer ${field.propertyName};
+    <% }else{ %>
     private ${field.propertyType} ${field.propertyName};
+    <% } %>
 <% } %>
 <% /** -----------END 字段循环遍历----------- **/ %>
 <% if(!entityLombokModel){ %>

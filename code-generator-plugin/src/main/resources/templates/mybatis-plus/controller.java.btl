@@ -1,28 +1,21 @@
 package ${package.Controller};
 
-<% if(entityLombokModel){ %>
-import lombok.extern.slf4j.Slf4j;
-<% } %>
 import javax.validation.Valid;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ${commonPackage}.CommonResult;
 import ${facadePackage}.dto.${entity}DTO;
 import ${managerPackage}.converter.${entity}Converter;
-<% if(restControllerStyle){ %>
-import org.springframework.web.bind.annotation.RestController;
-<% }else{ %>
-import org.springframework.stereotype.Controller;
-<% } %>
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 <% if(isNotEmpty(superControllerClassPackage)){ %>
 import ${superControllerClassPackage};
 <% } %>
 import ${package.Entity}.${entity};
 import ${package.Service}.${table.serviceName};
-import lombok.RequiredArgsConstructor;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -34,20 +27,22 @@ import java.util.List;
  * @author ${author}
  * @since ${date}
  */
-<% if(entityLombokModel){ %>
 @Slf4j
-<% } %>
 @Validated
-<% if(restControllerStyle){ %>
 @RestController
-<% }else{ %>
-@Controller
-<% } %>
 @RequestMapping("<% if(isNotEmpty(moduleName)){ %>/${moduleName}<% } %>/${lowEntityName}")
 @RequiredArgsConstructor
 public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>extends ${superControllerName}<% } %> {
 
     private final ${table.serviceName} ${lowEntityName}Service;
+
+    @ApiOperation("获取分页")
+    @GetMapping("/page")
+    public CommonResult<IPage<${entity}>> page(@RequestParam(name = "pageNo", defaultValue = "1", required = false) Integer pageNo,
+                                              @RequestParam(name = "pageSize", defaultValue = "10", required = false) Integer pageSize)  {
+        IPage<${entity}> res = ${lowEntityName}Service.page(new Page<>(pageNo, pageSize));
+        return CommonResult.success(res);
+    }
 
     @ApiOperation("列表")
     @GetMapping("/list")
@@ -79,4 +74,5 @@ public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>exten
     public void delete(@RequestParam Long id) {
         ${lowEntityName}Service.removeById(id);
     }
+
 }

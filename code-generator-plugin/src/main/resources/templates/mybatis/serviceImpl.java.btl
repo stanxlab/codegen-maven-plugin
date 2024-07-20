@@ -3,6 +3,8 @@ package ${package.ServiceImpl};
 <% if(entityLombokModel){ %>
 import lombok.extern.slf4j.Slf4j;
 <% } %>
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import ${package.Entity}.${entity};
 import ${package.Mapper}.${table.mapperName};
 import ${package.Service}.${table.serviceName};
@@ -27,6 +29,12 @@ import lombok.RequiredArgsConstructor;
 public class ${table.serviceImplName} implements ${table.serviceName} {
 
     private final ${entity}Mapper ${lowEntityName}Mapper;
+
+    @Override
+    public PageInfo<${entity}> page(Integer pageNo, Integer pageSize) {
+        return PageHelper.startPage(pageNo, pageSize)
+                .doSelectPageInfo(() -> ${lowEntityName}Mapper.selectList(null));
+    }
 
     @Override
     public List<${entity}> list() {

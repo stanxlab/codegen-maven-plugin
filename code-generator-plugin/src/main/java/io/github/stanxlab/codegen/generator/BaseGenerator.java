@@ -183,6 +183,7 @@ public abstract class BaseGenerator {
         String facadePath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
                 ModuleNameEnum.FACADE, packageConfig.getFacade());
 
+        customMap.put("multiModule", this.projectInfo.getParameters().isMultiModule());
         customMap.put("enableCrudCode", this.projectInfo.getParameters().isEnableCrudCode());
         customMap.put("parentPackage", packageConfig.getParent());
         customMap.put("commonPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getCommon());

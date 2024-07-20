@@ -31,14 +31,9 @@ public class Parameters {
     private String[] tablePrefix;
 
     /**
-     * The absolute path to the folder.
+     * 默认模板类型，目前只支持beetl模板引擎
      */
-//    private String templateLocation;
-
-    /**
-     * 模板类型
-     */
-    private TemplateTypeEnum templateType = TemplateTypeEnum.velocity;
+    private TemplateTypeEnum templateType = TemplateTypeEnum.beetl;
 
     /**
      * 【实体】是否为lombok模型（默认 true）

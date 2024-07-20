@@ -191,7 +191,10 @@ public class DependencyManager {
         for (String[] def : dependencyDefs) {
             Map<String, String> dependency = new HashMap<>();
             if (def.length == 1) {
-                // 内部依赖处理
+                // 内部依赖处理，仅在多模块项目中需要
+                if (!this.projectInfo.getParameters().isMultiModule()) {
+                    continue;
+                }
                 ModuleNameEnum moduleNameEnum = ModuleNameEnum.valueOf(def[0]);
                 String depModuleName = moduleNameEnum.getModuleName(this.projectInfo.getBaseProjectName());
                 dependency.put("groupId", this.projectInfo.getParameters().getOutputPackage());

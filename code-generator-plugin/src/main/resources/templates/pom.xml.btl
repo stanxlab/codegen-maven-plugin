@@ -16,7 +16,9 @@
     <artifactId>${artifactId}</artifactId>
     <version>${revision}</version>
 
+        <% if(multiModule){ %>
     <packaging>pom</packaging>
+        <% } %>
     <% } else { %>
     <parent>
         <groupId>${groupId}</groupId>
@@ -28,7 +30,7 @@
     <artifactId>${artifactId}</artifactId>
     <% } %>
 
-    <% if(isParent){ %>
+    <% if(isParent && multiModule){ %>
     <modules>
     <% for(moduleItem in allModuleNames) { %>
         <module>${moduleItem}</module>
@@ -63,7 +65,7 @@
     </properties>
     <% } %>
 
-<% if(isParent){ %>
+<% if(isParent && multiModule){ %>
     <dependencyManagement>
         <dependencies>
         <% for(dependency in dependencies) { %>
@@ -78,7 +80,7 @@
         <% } %>
         </dependencies>
     </dependencyManagement>
-<% } else { %>
+<% } else if(multiModule) { %>
     <dependencies>
     <% for(dependency in dependencies) { %>
         <dependency>
@@ -90,6 +92,19 @@
         </dependency>
     <% } %>
     </dependencies>
+<% } else { %>
+     <dependencies>
+     <% for(dependency in dependencies) { %>
+         <dependency>
+             <groupId>${dependency.groupId}</groupId>
+             <artifactId>${dependency.artifactId}</artifactId>
+             <version>${dependency.version}</version>
+         <% if(!isEmpty(dependency.scope)){ %>
+             <scope>${dependency.scope}</scope>
+         <% } %>
+         </dependency>
+     <% } %>
+     </dependencies>
 <% } %>
 
 <% if(isParent){ %>

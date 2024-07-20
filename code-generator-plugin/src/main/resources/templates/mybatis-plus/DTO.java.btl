@@ -50,6 +50,8 @@ public class ${entity}DTO implements Serializable {
     private java.util.Date ${field.propertyName};
     <% }else if('BigDecimal' == field.propertyType){ %>
     private java.math.BigDecimal ${field.propertyName};
+    <% }else if('Byte' == field.propertyType){ %>
+    private Integer ${field.propertyName};
     <% }else{ %>
     private ${field.propertyType} ${field.propertyName};
     <% } %>

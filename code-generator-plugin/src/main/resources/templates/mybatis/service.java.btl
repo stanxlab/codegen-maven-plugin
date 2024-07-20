@@ -1,5 +1,6 @@
 package ${package.Service};
 
+import com.github.pagehelper.PageInfo;
 import ${package.Entity}.${entity};
 import java.util.List;
 
@@ -12,6 +13,8 @@ import java.util.List;
  * @since ${date}
  */
 public interface ${table.serviceName} {
+
+    PageInfo<${entity}> page(Integer pageNo, Integer pageSize);
 
     List<${entity}> list();
 

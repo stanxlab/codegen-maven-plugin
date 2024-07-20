@@ -2,7 +2,6 @@ package io.github.stanxlab.codegen.generator;
 
 import io.github.stanxlab.codegen.entity.Parameters;
 import io.github.stanxlab.codegen.entity.ProjectInfo;
-import io.github.stanxlab.codegen.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +14,16 @@ class AutoGeneratorMybatisPlusTest extends BaseTest {
     void testExecute_InitProject() {
         Path path = getRandomPath();
         ProjectInfo projectInfo = getProjectInfo(path);
+        new DefaultAutoGenerator(projectInfo).execute();
+        // 生成pom文件
+        new PomGenerator(projectInfo).execute();
+        new OtherFilesGenerator(projectInfo).execute();
+    }
+
+    @Test
+    void testExecute_InitProject_Disable_MultiModule() {
+        Path path = getRandomPath();
+        ProjectInfo projectInfo = getProjectInfo(path, false);
         new DefaultAutoGenerator(projectInfo).execute();
         // 生成pom文件
         new PomGenerator(projectInfo).execute();
@@ -65,7 +74,7 @@ class AutoGeneratorMybatisPlusTest extends BaseTest {
                         .tables("all")
                         .outputPackage("com.stanxlab.demo")
                         .dbInfo(dbInfo)
-                        .templateType(TemplateTypeEnum.beetl)
+//                        .templateType(TemplateTypeEnum.beetl)
                         .multiModule(multiModule)
                         .build())
                 .build();
