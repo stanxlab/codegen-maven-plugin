@@ -64,15 +64,6 @@ public abstract class BaseGenerator {
         DefaultPackageConfig defaultPackageConfig = projectInfo.getParameters().getPackageConfig();
         if (defaultPackageConfig != null) {
             packageConfig = defaultPackageConfig;
-//            packageConfig = DefaultPackageConfig.builder()
-//                    .parent(defaultPackageConfig.getParent())
-//                    .entity(defaultPackageConfig.getEntity())
-//                    .service(defaultPackageConfig.getService())
-//                    .serviceImpl(defaultPackageConfig.getServiceImpl())
-//                    .mapper(defaultPackageConfig.getMapper())
-//                    .xml(defaultPackageConfig.getXml())
-//                    .controller(defaultPackageConfig.getController())
-//                    .build();
         } else {
             packageConfig = new DefaultPackageConfig();
         }
@@ -194,13 +185,6 @@ public abstract class BaseGenerator {
 
         List<CustomFile> list = new ArrayList<>();
 
-//        list.add(new CustomFile.Builder()
-//                .fileName(TemplateFilesEnum.VO.getFileName())
-//                .templatePath(getTemplateFilePath(TemplateFilesEnum.VO))
-//                .filePath(facadePath)
-//                .packageName("vo")
-//                .build());
-
         list.add(new CustomFile.Builder()
                 .fileName(TemplateFilesEnum.DTO.getFileName())
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.DTO))
@@ -232,8 +216,6 @@ public abstract class BaseGenerator {
                     // 首字母小写的实体名
                     objectMap.put("lowEntityName", StrUtil.lowerFirst(tableInfo.getEntityName()));
                     objectMap.put("lowMapperName", StrUtil.lowerFirst(tableInfo.getMapperName()));
-                    System.out.println("----->>>>tableInfo: " + JSON.toJSONString(tableInfo));
-                    System.out.println("----->>>>objectMap: " + objectMap);
                 })
                 .customMap(customMap)
                 .customFile(list)
@@ -242,7 +224,6 @@ public abstract class BaseGenerator {
 
     protected PackageConfig packageConfigBuilder(PackageConfig.Builder builder) {
         Map<OutputFile, String> pathInfoMap = PathBuilderUtil.buildPaths(this.projectInfo, packageConfig);
-        System.out.println("----->>>>pathInfoMap: " + JSON.toJSONString(pathInfoMap));
         return builder
                 .parent(packageConfig.getParent())
                 .entity(packageConfig.getEntity())

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
- *
+ * 入参类
  */
 @Data
 @SuperBuilder
@@ -36,7 +36,7 @@ public class Parameters {
     private TemplateTypeEnum templateType = TemplateTypeEnum.beetl;
 
     /**
-     * 【实体】是否为lombok模型（默认 true）
+     * 是否为lombok模型（默认 true）
      */
     private boolean lombokModel = true;
 
@@ -51,12 +51,12 @@ public class Parameters {
     private boolean multiModule = true;
 
     /**
-     * 默认包配置
-     */
-    private DefaultPackageConfig packageConfig;
-
-    /**
      * 数据库配置
      */
     private DbInfo dbInfo;
+
+    /**
+     * 默认包配置
+     */
+    private DefaultPackageConfig packageConfig;
 }
