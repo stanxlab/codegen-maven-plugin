@@ -57,7 +57,7 @@
 
 2. 生成多模块项目
 
-![usage-init-project](./doc/usage-init-project.gif)
+![usage-init-project](doc/usage-init-project.gif)
 
 ### 生成dao层代码
 
