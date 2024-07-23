@@ -29,20 +29,10 @@
                 <version>1.0.3</version>
                 <configuration>
                     <parameters>
-                        <!--  项目基础包名  -->
                         <outputPackage>com.stanxlab.demo</outputPackage>
-                        <!--  项目基础名称，生成模块名前缀使用  -->
-                        <baseProjectName>xxxlab</baseProjectName>
-                        <!--  配置表名，all表示所有，不配置则在执行时输入  -->
-                        <tables>all</tables>
-                        <packageConfig>
-                            <!--  自定义Mapper的基类  -->
-                            <!--  <superMapperClass>com.stanxlab.mybatis.mapper.BaseMapper</superMapperClass>-->
-                        </packageConfig>
-                        <!--  配置表前缀，生成的实体类名会剔除前缀  -->
-                        <!-- <tablePrefix>cms_</tablePrefix>-->
+                        <baseProjectName>zmes</baseProjectName>
+                        <tables>all</tables>  
                         <dbInfo>
-                            <!--  数据库连接信息  -->
                             <url>jdbc:mysql://192.168.2.229:3306/test?useUnicode=true</url>
                             <username>test</username>
                             <password>a123456</password>
@@ -62,3 +52,62 @@
 ### 生成dao层代码
 
 点击插件 `mybatis:tables` 命令。
+
+
+## plugin 其他配置说明
+```xml
+
+<plugin>
+    <groupId>io.github.stanxlab</groupId>
+    <artifactId>codegen</artifactId>
+    <version>1.0.3</version>
+    <configuration>
+        <parameters>
+            <!--  项目基础包名  -->
+            <outputPackage>com.stanxlab.demo</outputPackage>
+            <!--  项目基础名称，生成模块名前缀使用  -->
+            <baseProjectName>xxxlab</baseProjectName>
+            <!--  配置是否生成多模块项目，默认为true  -->
+            <multiModule>true</multiModule>
+            <!--  配置是否生成基础的crud代码，默认为true  -->
+            <enableCrudCode>true</enableCrudCode>
+            <!--  配置表名，all表示所有，不配置则在执行时输入  -->
+            <tables>region,users</tables>
+            <packageConfig>
+                <!--  自定义的基类  -->
+                <!--  <superMapperClass>com.stanxlab.demo.mapper.BaseMapper</superMapperClass>-->
+                <!--  <superControllerClass>com.stanxlab.demo.BaseController</superControllerClass>-->
+                <!--  <superServiceClass>com.stanxlab.demo.BaseService</superServiceClass>-->
+                <!--  <superServiceImplClass>com.stanxlab.demo.BaseServiceImpl</superServiceImplClass>-->
+                <!--  <commonResultClass>com.stanxlab.demo.CommmonResult</commonResultClass>-->
+                <!--    xml路径名   -->
+                <xml>mapper.mysql</xml>
+                <!--    配置包名   -->
+                <daoModuleName>dao</daoModuleName>
+                <entity>entity</entity>
+                <mapper>mapper</mapper>
+                <common>common</common>
+                <facade>facade</facade>
+                <manager>manager</manager>
+                <service>service</service>
+                <serviceImpl>service.impl</serviceImpl>
+
+                <!--    配置是否启用Controller层    -->
+                <enableController>true</enableController>
+                <enableService>true</enableService>
+                <enableManager>true</enableManager>
+            </packageConfig>
+            <!--  配置表前缀，生成的实体类名会剔除前缀  -->
+            <tablePrefix>cms_</tablePrefix>
+            <dbInfo>
+                <!--  数据库连接信息  -->
+                <url>jdbc:mysql://192.168.2.229:3306/test?useUnicode=true</url>
+                <username>test</username>
+                <password>a123456</password>
+            </dbInfo>
+            <!--  配置作者信息，默认读取 user.name环境变量  -->
+            <author>stan@xlab.com</author>
+        </parameters>
+    </configuration>
+</plugin>
+```
