@@ -78,7 +78,7 @@ public class DefaultPackageConfig {
 
         if (StringUtils.isEmpty(this.commonResultClass)) {
             this.commonResultClass = this.parent + "." + this.common + "." +
-                    TemplateFilesEnum.COMMON_RESULT.getFileName().replace("\\.java", "");
+                    TemplateFilesEnum.COMMON_RESULT.getFileName().replace(".java", "");
         }
 
         switch (ormType) {

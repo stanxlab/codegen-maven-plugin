@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ${commonPackage}.CommonResult;
+import ${commonResultClass};
 import ${facadePackage}.dto.${entity}DTO;
 import ${managerPackage}.converter.${entity}Converter;
 <% if(isNotEmpty(superControllerClassPackage)){ %>
@@ -38,41 +38,38 @@ public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>exten
 
     @ApiOperation("获取分页")
     @GetMapping("/page")
-    public CommonResult<PageInfo<${entity}>> page(@RequestParam(name = "pageNo", defaultValue = "1", required = false) Integer pageNo,
+    public ${commonResultClassName}<PageInfo<${entity}>> page(@RequestParam(name = "pageNo", defaultValue = "1", required = false) Integer pageNo,
                                               @RequestParam(name = "pageSize", defaultValue = "10", required = false) Integer pageSize)  {
         PageInfo<${entity}> res = ${lowEntityName}Service.page(pageNo, pageSize);
-        return CommonResult.success(res);
-    }
-
-    @ApiOperation("列表")
-    @GetMapping("/list")
-    public CommonResult<List<${entity}>> list() {
-        return CommonResult.success(${lowEntityName}Service.list());
+        return ${commonResultClassName}.success(res);
     }
 
     @ApiOperation("详情")
     @GetMapping("/detail")
-    public CommonResult<${entity}DTO> detail(@RequestParam Long id) {
+    public ${commonResultClassName}<${entity}DTO> detail(@RequestParam Long id) {
         ${entity} res = ${lowEntityName}Service.getById(id);
-        return CommonResult.success(${entity}Converter.INSTANCE.to${entity}DTO(res));
+        return ${commonResultClassName}.success(${entity}Converter.INSTANCE.to${entity}DTO(res));
     }
 
     @ApiOperation("新增")
     @PostMapping("/add")
-    public void add(@Valid @RequestBody ${entity} ${lowEntityName}) {
-        ${lowEntityName}Service.save(${lowEntityName});
+    public ${commonResultClassName}<Boolean> add(@Valid @RequestBody ${entity} ${lowEntityName}) {
+        Boolean res = ${lowEntityName}Service.save(${lowEntityName});
+        return ${commonResultClassName}.success(res);
     }
 
     @ApiOperation("更新")
     @PostMapping("/update")
-    public void update(@Valid @RequestBody ${entity} ${lowEntityName}) {
-        ${lowEntityName}Service.updateById(${lowEntityName});
+    public ${commonResultClassName}<Boolean> update(@Valid @RequestBody ${entity} ${lowEntityName}) {
+        Boolean res = ${lowEntityName}Service.updateById(${lowEntityName});
+        return ${commonResultClassName}.success(res);
     }
 
     @ApiOperation("删除")
     @PostMapping("/delete")
-    public void delete(@RequestParam Long id) {
-        ${lowEntityName}Service.removeById(id);
+    public ${commonResultClassName}<Boolean> delete(@RequestParam Long id) {
+        Boolean res = ${lowEntityName}Service.removeById(id);
+        return ${commonResultClassName}.success(res);
     }
 
 }

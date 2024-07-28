@@ -1,19 +1,19 @@
 package io.github.stanxlab.codegen.generator;
 
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.builder.Controller;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.BeetlTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.baomidou.mybatisplus.generator.util.FileUtils;
-import io.github.stanxlab.codegen.enums.*;
-import io.github.stanxlab.codegen.util.PathBuilderUtil;
 import io.github.stanxlab.codegen.entity.DbInfo;
 import io.github.stanxlab.codegen.entity.DefaultPackageConfig;
 import io.github.stanxlab.codegen.entity.ProjectInfo;
+import io.github.stanxlab.codegen.enums.*;
+import io.github.stanxlab.codegen.util.PathBuilderUtil;
 import io.github.stanxlab.codegen.util.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,11 +67,13 @@ public abstract class BaseGenerator {
         } else {
             packageConfig = new DefaultPackageConfig();
         }
-        packageConfig.init(ormType);
 
+        // 优先使用 outputPackage配置
         if (StringUtils.isNotEmpty(projectInfo.getParameters().getOutputPackage())) {
             packageConfig.setParent(projectInfo.getParameters().getOutputPackage());
         }
+
+        packageConfig.init(ormType);
     }
 
     protected AbstractTemplateEngine getTemplateEngine() {
@@ -110,7 +112,7 @@ public abstract class BaseGenerator {
         String configTables = this.projectInfo.getParameters().getTables();
         List<String> tables;
         if (StringUtils.isEmpty(configTables)) {
-            tables = getTables(scanner.apply("请输入表名，多个英文逗号分隔,所有输入 all"));
+            tables = getTables(scanner.apply("请输入表名，多个英文逗号分隔，所有表请输入 all"));
         } else {
             tables = getTables(configTables);
         }
@@ -119,19 +121,28 @@ public abstract class BaseGenerator {
         if (null == tablePrefix) {
             tablePrefix = new String[]{};
         }
-        return builder
-                .addInclude(tables)
+
+        builder.addInclude(tables)
                 .addTablePrefix(tablePrefix)
-                .controllerBuilder().enableRestStyle().template(getTemplateDefault(TemplateFilesEnum.CONTROLLER)).superClass(packageConfig.getSuperControllerClass())
                 .serviceBuilder().convertServiceFileName((entityName) -> entityName + "Service")
                 .serviceTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE)).serviceImplTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE_IMPL))
                 .superServiceClass(packageConfig.getSuperServiceClass()).superServiceImplClass(packageConfig.getSuperServiceImplClass())
-
                 .entityBuilder().enableFileOverride().enableLombok().javaTemplate(getTemplateDefault(TemplateFilesEnum.ENTITY))
                 .mapperBuilder().enableFileOverride().enableBaseColumnList().enableBaseResultMap().superClass(packageConfig.getSuperMapperClass())
                 .mapperTemplate(getTemplateDefault(TemplateFilesEnum.MAPPER))
-                .mapperXmlTemplate(getTemplateDefault(TemplateFilesEnum.XML))
-                .build();
+                .mapperXmlTemplate(getTemplateDefault(TemplateFilesEnum.XML));
+
+        Controller.Builder controllerBuilder = builder.controllerBuilder()
+                .enableRestStyle()
+                .template(getTemplateDefault(TemplateFilesEnum.CONTROLLER))
+                .superClass(packageConfig.getSuperControllerClass());
+
+        // 不生成对应的controller
+        if (!packageConfig.isEnableController()) {
+            controllerBuilder.disable();
+        }
+
+        return builder.build();
     }
 
     protected String getTemplateFilePath(TemplateFilesEnum fileType) {
@@ -182,6 +193,8 @@ public abstract class BaseGenerator {
         customMap.put("managerImplPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getManagerImpl());
         customMap.put("facadePackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getFacade());
         customMap.put("isDefaultSuperMapper", packageConfig.isDefaultSuperMapper());
+        customMap.put("commonResultClass", packageConfig.getCommonResultClass());
+        customMap.put("commonResultClassName", getCommonResultClassName());
 
         List<CustomFile> list = new ArrayList<>();
 
@@ -220,6 +233,16 @@ public abstract class BaseGenerator {
                 .customMap(customMap)
                 .customFile(list)
                 .build();
+    }
+
+    /**
+     * 获取 CommonResult 类名
+     *
+     * @return
+     */
+    private String getCommonResultClassName() {
+        String[] split = packageConfig.getCommonResultClass().split("\\.");
+        return split[split.length - 1];
     }
 
     protected PackageConfig packageConfigBuilder(PackageConfig.Builder builder) {

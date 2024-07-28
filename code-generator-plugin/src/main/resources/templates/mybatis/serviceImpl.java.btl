@@ -47,17 +47,20 @@ public class ${table.serviceImplName} implements ${table.serviceName} {
     }
 
     @Override
-    public void save(${entity} ${lowEntityName}) {
+    public Boolean save(${entity} ${lowEntityName}) {
         ${lowEntityName}Mapper.insert(${lowEntityName});
+        return true;
     }
 
     @Override
-    public void updateById(${entity} ${lowEntityName}) {
+    public Boolean updateById(${entity} ${lowEntityName}) {
         ${lowEntityName}Mapper.updateByPrimaryKey(${lowEntityName});
+        return true;
     }
 
     @Override
-    public void removeById(Long id) {
+    public Boolean removeById(Long id) {
         ${lowEntityName}Mapper.deleteByPrimaryKey(id);
+        return true;
     }
 }

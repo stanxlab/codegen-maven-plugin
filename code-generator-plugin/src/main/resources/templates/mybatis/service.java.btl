@@ -20,9 +20,9 @@ public interface ${table.serviceName} {
 
     ${entity} getById(Long id);
 
-    void save(${entity} ${lowEntityName});
+    Boolean save(${entity} ${lowEntityName});
 
-    void updateById(${entity} ${lowEntityName});
+    Boolean updateById(${entity} ${lowEntityName});
 
-    void removeById(Long id);
+    Boolean removeById(Long id);
 }

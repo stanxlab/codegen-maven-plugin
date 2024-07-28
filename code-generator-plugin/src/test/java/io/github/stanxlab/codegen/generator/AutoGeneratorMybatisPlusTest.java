@@ -1,5 +1,6 @@
 package io.github.stanxlab.codegen.generator;
 
+import io.github.stanxlab.codegen.entity.DefaultPackageConfig;
 import io.github.stanxlab.codegen.entity.Parameters;
 import io.github.stanxlab.codegen.entity.ProjectInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,18 @@ class AutoGeneratorMybatisPlusTest extends BaseTest {
     void testExecute_InitProject() {
         Path path = getRandomPath();
         ProjectInfo projectInfo = getProjectInfo(path);
+        new DefaultAutoGenerator(projectInfo).execute();
+        // 生成pom文件
+        new PomGenerator(projectInfo).execute();
+        new OtherFilesGenerator(projectInfo).execute();
+    }
+
+    @Test
+    void testExecute_InitProject_Custom_Package() {
+        DefaultPackageConfig packageConfig = new DefaultPackageConfig();
+        packageConfig.setEnableController(false);
+        Path path = getRandomPath();
+        ProjectInfo projectInfo = getProjectInfo(path, true, packageConfig);
         new DefaultAutoGenerator(projectInfo).execute();
         // 生成pom文件
         new PomGenerator(projectInfo).execute();
@@ -64,6 +77,10 @@ class AutoGeneratorMybatisPlusTest extends BaseTest {
     }
 
     protected ProjectInfo getProjectInfo(Path path, boolean multiModule) {
+        return getProjectInfo(path, true, new DefaultPackageConfig());
+    }
+
+    protected ProjectInfo getProjectInfo(Path path, boolean multiModule, DefaultPackageConfig packageConfig) {
         ProjectInfo projectInfo = ProjectInfo.builder()
                 .baseDirPath(path.toString())
                 .baseDir(baseDir)
@@ -74,6 +91,7 @@ class AutoGeneratorMybatisPlusTest extends BaseTest {
                         .tables("all")
                         .outputPackage("com.stanxlab.demo")
                         .dbInfo(dbInfo)
+                        .packageConfig(packageConfig)
 //                        .templateType(TemplateTypeEnum.beetl)
                         .multiModule(multiModule)
                         .build())
