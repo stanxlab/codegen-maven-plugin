@@ -189,30 +189,22 @@ public class DependencyManager {
         List<Map<String, String>> dependencies = new ArrayList<>();
 
         for (String[] def : dependencyDefs) {
-            Map<String, String> dependency = new HashMap<>();
             if (def.length == 1) {
-                // 内部依赖处理，仅在多模块项目中需要
-                if (!this.projectInfo.getParameters().isMultiModule()) {
-                    continue;
-                }
-                ModuleNameEnum moduleNameEnum = ModuleNameEnum.valueOf(def[0]);
-                String depModuleName = moduleNameEnum.getModuleName(this.projectInfo.getBaseProjectName());
-                dependency.put("groupId", this.projectInfo.getParameters().getOutputPackage());
-                dependency.put("artifactId", depModuleName);
-                dependency.put("version", "${revision}");
-            } else {
-                dependency.put("groupId", def[0]);
-                dependency.put("artifactId", def[1]);
+                // 内部依赖, 单模块不需要
+                continue;
+            }
+            Map<String, String> dependency = new HashMap<>();
+            dependency.put("groupId", def[0]);
+            dependency.put("artifactId", def[1]);
 
-                // 版本号默认为空字符串，如果没有提供则不加入map中
-                if (def.length >= 3 && StringUtils.isNotEmpty(def[2])) {
-                    dependency.put("version", def[2]);
-                }
+            // 版本号默认为空字符串，如果没有提供则不加入map中
+            if (def.length >= 3 && StringUtils.isNotEmpty(def[2])) {
+                dependency.put("version", def[2]);
+            }
 
-                // scope也是可选的，只有当数组长度大于等于4且scope不为空时才加入
-                if (def.length >= 4 && StringUtils.isNotEmpty(def[3])) {
-                    dependency.put("scope", def[3]);
-                }
+            // scope也是可选的，只有当数组长度大于等于4且scope不为空时才加入
+            if (def.length >= 4 && StringUtils.isNotEmpty(def[3])) {
+                dependency.put("scope", def[3]);
             }
             dependencies.add(dependency);
         }

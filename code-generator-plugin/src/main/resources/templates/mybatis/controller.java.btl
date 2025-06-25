@@ -1,12 +1,12 @@
 package ${package.Controller};
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import ${pageInfoClass};
+import ${pageRequestClass};
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ${commonResultClass};
-import ${facadePackage}.dto.${entity}DTO;
-import ${managerPackage}.converter.${entity}Converter;
+import ${dtoPackage}.${originalEntityName}DTO;
+import ${converterPackage}.${originalEntityName}Converter;
 <% if(isNotEmpty(superControllerClassPackage)){ %>
 import ${superControllerClassPackage};
 <% } %>
@@ -32,36 +32,39 @@ import java.util.List;
 @RestController
 @RequestMapping("<% if(isNotEmpty(moduleName)){ %>/${moduleName}<% } %>/${lowEntityName}")
 @RequiredArgsConstructor
-public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>extends ${superControllerName}<% } %> {
+public class ${originalEntityName}Controller <% if(isNotEmpty(superControllerName)){ %>extends ${superControllerName}<% } %> {
 
     private final ${table.serviceName} ${lowEntityName}Service;
 
     @ApiOperation("获取分页")
     @GetMapping("/page")
-    public ${commonResultClassName}<PageInfo<${entity}>> page(@RequestParam(name = "pageNo", defaultValue = "1", required = false) Integer pageNo,
+    public ${commonResultClassName}<${pageInfoClassName}<${entity}>> page(@RequestParam(name = "pageNo", defaultValue = "1", required = false) Integer pageNo,
                                               @RequestParam(name = "pageSize", defaultValue = "10", required = false) Integer pageSize)  {
-        PageInfo<${entity}> res = ${lowEntityName}Service.page(pageNo, pageSize);
+        ${pageInfoClassName}<${entity}> res = ${lowEntityName}Service.page(new ${pageRequestClassName}(pageNo, pageSize), null);
         return ${commonResultClassName}.success(res);
     }
 
     @ApiOperation("详情")
     @GetMapping("/detail")
-    public ${commonResultClassName}<${entity}DTO> detail(@RequestParam Long id) {
+    public ${commonResultClassName}<${originalEntityName}DTO> detail(@RequestParam Long id) {
         ${entity} res = ${lowEntityName}Service.getById(id);
-        return ${commonResultClassName}.success(${entity}Converter.INSTANCE.to${entity}DTO(res));
+        ${originalEntityName}DTO ${lowEntityName}DTO = ${originalEntityName}Converter.INSTANCE.to${originalEntityName}DTO(res);
+        return ${commonResultClassName}.success(${lowEntityName}DTO);
     }
 
     @ApiOperation("新增")
     @PostMapping("/add")
-    public ${commonResultClassName}<Boolean> add(@Valid @RequestBody ${entity} ${lowEntityName}) {
-        Boolean res = ${lowEntityName}Service.save(${lowEntityName});
+    public ${commonResultClassName}<Boolean> add(@Valid @RequestBody ${originalEntityName}DTO ${lowEntityName}) {
+        ${entity} ${lowEntityName}<% if(isNotEmpty(entitySuffix)){ %>${entitySuffix}<% } %> = ${originalEntityName}Converter.INSTANCE.to${originalEntityName}<% if(isNotEmpty(entitySuffix)){ %>${entitySuffix}<% } %>(${lowEntityName});
+        Boolean res = ${lowEntityName}Service.save(${lowEntityName}<% if(isNotEmpty(entitySuffix)){ %>${entitySuffix}<% } %>);
         return ${commonResultClassName}.success(res);
     }
 
     @ApiOperation("更新")
     @PostMapping("/update")
-    public ${commonResultClassName}<Boolean> update(@Valid @RequestBody ${entity} ${lowEntityName}) {
-        Boolean res = ${lowEntityName}Service.updateById(${lowEntityName});
+    public ${commonResultClassName}<Boolean> update(@Valid @RequestBody ${originalEntityName}DTO ${lowEntityName}) {
+        ${entity} ${lowEntityName}<% if(isNotEmpty(entitySuffix)){ %>${entitySuffix}<% } %> = ${originalEntityName}Converter.INSTANCE.to${originalEntityName}<% if(isNotEmpty(entitySuffix)){ %>${entitySuffix}<% } %>(${lowEntityName});
+        Boolean res = ${lowEntityName}Service.updateById(${lowEntityName}<% if(isNotEmpty(entitySuffix)){ %>${entitySuffix}<% } %>);
         return ${commonResultClassName}.success(res);
     }
 

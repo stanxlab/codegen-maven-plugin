@@ -24,6 +24,8 @@ public enum TemplateFilesEnum {
     APPLICATION_YAML("application.yaml"),
     COMMON_RESULT("CommonResult.java"),
     BASE_MAPPER("BaseMapper.java"),
+    BASE_SERVICE("BaseService.java"),
+    BASE_SERVICE_IMPL("BaseServiceImpl.java"),
 
     ;
 

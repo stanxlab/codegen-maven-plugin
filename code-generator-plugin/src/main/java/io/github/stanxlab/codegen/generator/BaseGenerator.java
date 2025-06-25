@@ -13,6 +13,7 @@ import io.github.stanxlab.codegen.entity.DbInfo;
 import io.github.stanxlab.codegen.entity.DefaultPackageConfig;
 import io.github.stanxlab.codegen.entity.ProjectInfo;
 import io.github.stanxlab.codegen.enums.*;
+import io.github.stanxlab.codegen.util.CustomEntityNameConvert;
 import io.github.stanxlab.codegen.util.PathBuilderUtil;
 import io.github.stanxlab.codegen.util.StringUtil;
 import lombok.Getter;
@@ -122,15 +123,31 @@ public abstract class BaseGenerator {
             tablePrefix = new String[]{};
         }
 
+        String entitySuffix = packageConfig.getEntitySuffix();
         builder.addInclude(tables)
                 .addTablePrefix(tablePrefix)
-                .serviceBuilder().convertServiceFileName((entityName) -> entityName + "Service")
-                .serviceTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE)).serviceImplTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE_IMPL))
-                .superServiceClass(packageConfig.getSuperServiceClass()).superServiceImplClass(packageConfig.getSuperServiceImplClass())
-                .entityBuilder().enableFileOverride().enableLombok().javaTemplate(getTemplateDefault(TemplateFilesEnum.ENTITY))
-                .mapperBuilder().enableFileOverride().enableBaseColumnList().enableBaseResultMap().superClass(packageConfig.getSuperMapperClass())
-                .mapperTemplate(getTemplateDefault(TemplateFilesEnum.MAPPER))
-                .mapperXmlTemplate(getTemplateDefault(TemplateFilesEnum.XML));
+                .serviceBuilder()
+                    .convertServiceFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Service")
+                    .convertServiceImplFileName(entityName -> removeSuffix(entityName, entitySuffix) + "ServiceImpl")
+                    .serviceTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE))
+                    .serviceImplTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE_IMPL))
+                .controllerBuilder()
+                    .convertFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Controller")
+                .mapperBuilder()
+                    .convertMapperFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Mapper")
+                    .convertXmlFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Mapper")
+                    .enableFileOverride()
+                    .enableBaseColumnList()
+                    .enableBaseResultMap()
+                    .superClass(packageConfig.getSuperMapperClass())
+                    .mapperTemplate(getTemplateDefault(TemplateFilesEnum.MAPPER))
+                    .mapperXmlTemplate(getTemplateDefault(TemplateFilesEnum.XML))
+                .entityBuilder()
+                    .nameConvert(new CustomEntityNameConvert(entitySuffix))
+                    .enableFileOverride()
+                    .enableLombok()
+                    .javaTemplate(getTemplateDefault(TemplateFilesEnum.ENTITY))
+                .build();
 
         Controller.Builder controllerBuilder = builder.controllerBuilder()
                 .enableRestStyle()
@@ -175,60 +192,96 @@ public abstract class BaseGenerator {
         // 自定义变量
         Map<String, Object> customMap = new HashMap<>();
 
-        String managerPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.MANAGER, packageConfig.getManager());
-        String managerImplPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.MANAGER, packageConfig.getManagerImpl());
+        String managerPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getManager());
+        String managerImplPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getManagerImpl());
 
-        String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.COMMON, packageConfig.getCommon());
-        String facadePath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.FACADE, packageConfig.getFacade());
+        String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getCommon());
+        String dtoPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getDto());
+        String converterPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getConverter());
 
-        customMap.put("multiModule", this.projectInfo.getParameters().isMultiModule());
+        customMap.put("multiModule", false);
         customMap.put("enableCrudCode", this.projectInfo.getParameters().isEnableCrudCode());
         customMap.put("parentPackage", packageConfig.getParent());
         customMap.put("commonPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getCommon());
         customMap.put("managerPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getManager());
         customMap.put("managerImplPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getManagerImpl());
-        customMap.put("facadePackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getFacade());
+        customMap.put("dtoPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getDto());
+        customMap.put("converterPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getConverter());
         customMap.put("isDefaultSuperMapper", packageConfig.isDefaultSuperMapper());
         customMap.put("commonResultClass", packageConfig.getCommonResultClass());
         customMap.put("commonResultClassName", getCommonResultClassName());
+        
+        // 添加分页相关配置
+        customMap.put("pageInfoClass", packageConfig.getPageInfoClass());
+        customMap.put("pageInfoClassName", getSimpleClassName(packageConfig.getPageInfoClass()));
+        customMap.put("pageRequestClass", packageConfig.getPageRequestClass());
+        customMap.put("pageRequestClassName", getSimpleClassName(packageConfig.getPageRequestClass()));
+        
+        // 添加实体后缀配置
+        customMap.put("entitySuffix", packageConfig.getEntitySuffix());
+        
+        // 添加 superService 相关的包名变量
+        customMap.put("superServiceClass", getSimpleClassName(packageConfig.getSuperServiceClass()));
+        customMap.put("superServiceClassPackage", packageConfig.getSuperServiceClass());
+        customMap.put("superServiceImplClass", getSimpleClassName(packageConfig.getSuperServiceImplClass()));
+        customMap.put("superServiceImplClassPackage", packageConfig.getSuperServiceImplClass());
+
+        // 移除 customMap.put("originalEntityName", ...) 的 lambda，改为 beforeOutputFile 阶段注入
 
         List<CustomFile> list = new ArrayList<>();
 
         list.add(new CustomFile.Builder()
-                .fileName(TemplateFilesEnum.DTO.getFileName())
+                // DTO 文件名：UserDTO.java (formatNameFunction返回"UserDTO", fileName是".java")
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "DTO")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.DTO))
-                .filePath(facadePath)
-                .packageName("dto")
+                .filePath(dtoPath)
                 .build());
 
-        // manager层 Converter
+        // manager层 Converter 文件名：UserConverter.java (formatNameFunction返回"UserConverter", fileName是".java")
         list.add(new CustomFile.Builder()
-                .fileName(TemplateFilesEnum.CONVERTER.getFileName())
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "Converter")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.CONVERTER))
-                .filePath(managerPath)
-                .packageName("converter")
+                .filePath(converterPath)
                 .build());
 
+        // manager 文件名：UserManager.java (formatNameFunction返回"UserManager", fileName是".java")
+/**
         list.add(new CustomFile.Builder()
-                // 通过格式化函数添加文件最后缀
-//                    .formatNameFunction(tableInfo -> "Prefix" + tableInfo.getEntityName() + "Suffix")
-                .fileName(StrUtil.upperFirst(TemplateFilesEnum.MANAGER.getFileName()))
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "Manager")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.MANAGER))
                 .filePath(managerPath).build());
+        // managerImpl 文件名：UserManagerImpl.java (formatNameFunction返回"UserManagerImpl", fileName是".java")
         list.add(new CustomFile.Builder()
-                .fileName(StrUtil.upperFirst(TemplateFilesEnum.MANAGER_IMPL.getFileName()))
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "ManagerImpl")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.MANAGER_IMPL))
                 .filePath(managerImplPath).build());
+ */
 
         return builder
                 .beforeOutputFile((tableInfo, objectMap) -> {
-                    // 首字母小写的实体名
-                    objectMap.put("lowEntityName", StrUtil.lowerFirst(tableInfo.getEntityName()));
+                    log.info("beforeOutputFile: tableInfo.getEntityName() = {}", tableInfo.getEntityName());
+                    log.info("beforeOutputFile: tableInfo.getFields() = {}", tableInfo.getFields());
+                    // 原始 entity 名（无后缀），供 DTO/Converter 命名，确保去除实体后缀
+                    String originalEntityName = removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix());
+                    // 首字母小写的实体名（基于原始名，不包含后缀）
+                    objectMap.put("lowEntityName", StrUtil.lowerFirst(originalEntityName));
                     objectMap.put("lowMapperName", StrUtil.lowerFirst(tableInfo.getMapperName()));
+                    objectMap.put("originalEntityName", originalEntityName);
+                    // 添加不包含实体后缀的Mapper类名
+                    objectMap.put("originalMapperName", originalEntityName + "Mapper");
+                    // 添加不包含实体后缀的XML文件名（调试用）
+                    objectMap.put("originalMapperXmlName", originalEntityName + "Mapper.xml");
+                    
+                    // 调试信息：打印关键变量
+                    log.info("tableInfo.getName() = {}", tableInfo.getName());
+                    log.info("tableInfo.getEntityName() = {}", tableInfo.getEntityName());
+                    log.info("tableInfo.getMapperName() = {}", tableInfo.getMapperName());
+                    log.info("originalEntityName = {}", originalEntityName);
+                    log.info("originalMapperName = {}", originalEntityName + "Mapper");
                 })
                 .customMap(customMap)
                 .customFile(list)
@@ -285,4 +338,36 @@ public abstract class BaseGenerator {
         }
     }
 
+    // 工具方法：下划线转驼峰并首字母大写
+    private String toCamelCaseUpperFirst(String tableName) {
+        StringBuilder result = new StringBuilder();
+        for (String part : tableName.split("_")) {
+            if (part.isEmpty()) continue;
+            result.append(Character.toUpperCase(part.charAt(0)));
+            if (part.length() > 1) {
+                result.append(part.substring(1).toLowerCase());
+            }
+        }
+        return result.toString();
+    }
+
+    // 新增工具方法：去除 entitySuffix
+    private String removeSuffix(String name, String suffix) {
+        if (name != null && suffix != null && name.endsWith(suffix)) {
+            return name.substring(0, name.length() - suffix.length());
+        }
+        return name;
+    }
+
+    // 新增工具方法：获取简单类名
+    private String getSimpleClassName(String fullClassName) {
+        if (fullClassName == null || fullClassName.isEmpty()) {
+            return "";
+        }
+        int lastDotIndex = fullClassName.lastIndexOf(".");
+        if (lastDotIndex == -1) {
+            return fullClassName;
+        }
+        return fullClassName.substring(lastDotIndex + 1);
+    }
 }

@@ -23,12 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 #if(${kotlin})
-open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>()#if(${generateService}), ${table.serviceName}#end {
+open class ${table.serviceImplName} : ${superServiceImplClass}<${originalMapperName}, ${entity}>()#if(${generateService}), ${table.serviceName}#end {
 
 }
 #else
-public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}>#if(${generateService}) implements ${table.serviceName}#end {
-    private final ${entity}Manager ${lowEntityName}Manager;
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${originalMapperName}, ${entity}>#if(${generateService}) implements ${table.serviceName}#end {
+    private final ${originalEntityName}Manager ${lowEntityName}Manager;
 
 }
 #end

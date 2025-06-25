@@ -10,9 +10,9 @@ import ${package.Entity}.${entity};
  * @since ${date}
  */
 <% if(isDefaultSuperMapper){ %>
-public interface ${entity}Mapper extends ${superMapperClass}<${entity}, Long> {
+public interface ${originalEntityName}Mapper extends ${superMapperClass}<${entity}, Long> {
 <% } else { %>
-public interface ${entity}Mapper extends ${superMapperClass}<${entity}> {
+public interface ${originalEntityName}Mapper extends ${superMapperClass}<${entity}, Long> {
 <% } %>
 
 }

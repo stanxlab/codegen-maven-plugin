@@ -6,7 +6,7 @@
 
     <groupId>io.github.stanxlab</groupId>
     <artifactId>codegen</artifactId>
-    <version>1.0.4</version>
+    <version>2.0.01</version>
     <packaging>maven-plugin</packaging>
     <name>codegen</name>
     <description>代码生成器maven插件，用于初始化多模块spring项目，以及生成模版代码，支持mybatis和mybtis-plus。</description>
@@ -131,7 +131,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.7.2</version>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -216,7 +222,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <phase>verify</phase>

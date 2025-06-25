@@ -50,19 +50,26 @@ public class OtherFilesGenerator extends BaseGenerator {
         objectMap.put("ormName", this.ormType.getOrmName());
         objectMap.put("baseProjectName", this.projectInfo.getBaseProjectName());
         objectMap.put("parentPackage", parentPackage);
+        objectMap.put("commonPackage", parentPackage + StringUtil.DOT + this.packageConfig.getCommon());
         objectMap.put("mapperPackage", parentPackage + StringUtil.DOT + this.packageConfig.getMapper());
 
         outputStartupApplication(objectMap);
         outputYamlFile(objectMap);
         outputCommonResult(objectMap);
         outputGitKeep(objectMap);
+        
+        // 仅在MyBatis模式下生成BaseService相关文件
+        if (this.ormType == ORMTypeEnum.MYBATIS) {
+            outputBaseService(objectMap);
+            outputBaseServiceImpl(objectMap);
+        }
     }
 
     private void outputGitKeep(Map<String, Object> objectMap) {
         File file = null;
         // test包子路径
         String testPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.TEST, "");
+                "");
 
         TemplateFilesEnum filesEnum = TemplateFilesEnum.GIT_KEEP;
         file = new File(Paths.get(testPath, filesEnum.getFileName()).toString());
@@ -71,7 +78,7 @@ public class OtherFilesGenerator extends BaseGenerator {
 
         // 创建web包的子路径
         String webPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.WEB, "");
+                "");
 
         file = new File(Paths.get(webPath, "config", filesEnum.getFileName()).toString());
         outputFile(file, objectMap, getTemplateFilePath(filesEnum));
@@ -84,7 +91,7 @@ public class OtherFilesGenerator extends BaseGenerator {
 
         // 创建common包的子路径
         String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.COMMON, packageConfig.getCommon());
+                packageConfig.getCommon());
         file = new File(Paths.get(commonPath, "consts", filesEnum.getFileName()).toString());
         outputFile(file, objectMap, getTemplateFilePath(filesEnum));
 
@@ -97,7 +104,7 @@ public class OtherFilesGenerator extends BaseGenerator {
 
     private void outputCommonResult(Map<String, Object> objectMap) {
         String path = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.COMMON, packageConfig.getCommon() + File.separator);
+                packageConfig.getCommon() + File.separator);
 
         TemplateFilesEnum filesEnum = TemplateFilesEnum.COMMON_RESULT;
         File file = new File(path + filesEnum.getFileName());
@@ -111,7 +118,7 @@ public class OtherFilesGenerator extends BaseGenerator {
     private void outputStartupApplication(Map<String, Object> objectMap) {
         // web模块根路径
         String webPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.WEB, "");
+                "");
         log.info("---->webPath: {}", webPath);
         TemplateFilesEnum filesEnum = TemplateFilesEnum.APPLICATION;
         File applicationFile = new File(Paths.get(webPath, filesEnum.getFileName()).toString());
@@ -122,21 +129,32 @@ public class OtherFilesGenerator extends BaseGenerator {
     }
 
     private void outputYamlFile(Map<String, Object> objectMap) {
-        String parentPackage = this.packageConfig.getParent();
+        String applicationFilePath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, "src/main/resources");
+        String applicationFileName = TemplateFilesEnum.APPLICATION_YAML.getFileName();
+        File file = new File(applicationFilePath, applicationFileName);
 
-        // web 资源路径
-        String webResourcePath = PathBuilderUtil.buildResourcePath(this.projectInfo, ModuleNameEnum.WEB, "");
+        String xmlPath = this.packageConfig.getXml().replace(".", "/");
+        String entityPackage = this.packageConfig.getParent() + StringUtil.DOT + this.packageConfig.getEntity();
+        objectMap.put("xmlPath", xmlPath);
+        objectMap.put("entityPackage", entityPackage);
+        objectMap.put("dbInfo", this.projectInfo.getParameters().getDbInfo());
 
-        objectMap.put("entityPackage", parentPackage + StringUtil.DOT + this.packageConfig.getEntity());
-        objectMap.put("xmlPath", PathBuilderUtil.replacePackageToPath(this.packageConfig.getXml()).replace("\\", "/"));
+        outputFile(file, objectMap, getTemplateFilePath(TemplateFilesEnum.APPLICATION_YAML));
+    }
 
-        log.info("---->webResourcePath: {}", webResourcePath);
-        TemplateFilesEnum filesEnum = TemplateFilesEnum.APPLICATION_YAML;
-        File yamlFile = new File(Paths.get(webResourcePath, filesEnum.getFileName()).toString());
-        if (!yamlFile.exists()) {
-            log.info("Generate application.yaml");
-            objectMap.put("dbInfo", this.projectInfo.getParameters().getDbInfo());
-            outputFile(yamlFile, objectMap, getTemplateFilePath(filesEnum));
-        }
+    private void outputBaseService(Map<String, Object> objectMap) {
+        String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getCommon());
+        String fileName = TemplateFilesEnum.BASE_SERVICE.getFileName();
+        File file = new File(commonPath, fileName);
+
+        outputFile(file, objectMap, getTemplateFilePath(TemplateFilesEnum.BASE_SERVICE));
+    }
+
+    private void outputBaseServiceImpl(Map<String, Object> objectMap) {
+        String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getCommon());
+        String fileName = TemplateFilesEnum.BASE_SERVICE_IMPL.getFileName();
+        File file = new File(commonPath, fileName);
+
+        outputFile(file, objectMap, getTemplateFilePath(TemplateFilesEnum.BASE_SERVICE_IMPL));
     }
 }

@@ -52,9 +52,7 @@ public abstract class BaseGeneratorMojo extends AbstractMojo {
         try {
             boolean initialProject = checkInitialProject();
             this.parameters = Optional.ofNullable(this.parameters).orElse(new Parameters());
-            if (checkSkipChildModule()) {
-                return;
-            }
+            
 
             ProjectInfo projectInfo = new ProjectInfo();
             projectInfo.setParameters(this.parameters);
@@ -77,16 +75,5 @@ public abstract class BaseGeneratorMojo extends AbstractMojo {
         }
     }
 
-    private boolean checkSkipChildModule() {
-        // 子模块跳过执行
-        String[] allModuleNames = ModuleNameEnum.getAllModuleNames(parameters.getBaseProjectName());
-        // 判断数组中是否包含 artifactId
-        for (String moduleName : allModuleNames) {
-            if (moduleName.equals(currentArtifactId)) {
-                getLog().warn("========>skip module: " + moduleName);
-                return true;
-            }
-        }
-        return false;
-    }
+    
 }

@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class DefaultPackageConfig {
     private String parent = "com.stanz.demo";
-    private String daoModuleName = "dao";
     private String entity = "entity";
     private String mapper = "mapper";
     private String xml = "mapper.mysql";
@@ -21,9 +20,15 @@ public class DefaultPackageConfig {
     private String serviceImpl = "service.impl";
     private String controller = "controller";
     private String common = "common";
-    private String facade = "facade";
     private String manager = "manager";
     private String managerImpl = "manager.impl";
+    private String dto = "dto";
+    private String converter = "converter";
+
+    /**
+     * 实体后缀
+     */
+    private String entitySuffix = "PO";
 
     /**
      * 自定义继承的Mapper类全称，带包名
@@ -51,6 +56,16 @@ public class DefaultPackageConfig {
     private String commonResultClass;
 
     /**
+     * PageInfo类全称，带包名 (分页信息返回类型)
+     */
+    private String pageInfoClass;
+
+    /**
+     * PageRequest类全称，带包名 (分页请求参数类型)
+     */
+    private String pageRequestClass;
+
+    /**
      * 是否生成controller
      */
     private boolean enableController = true;
@@ -63,7 +78,7 @@ public class DefaultPackageConfig {
     /**
      * 是否生成manager
      */
-    private boolean enableManager = true;
+    private boolean enableManager = false;
 
     /**
      * 是否使用默认的BaseMapper
@@ -71,14 +86,20 @@ public class DefaultPackageConfig {
     private boolean isDefaultSuperMapper = false;
 
     public void init(ORMTypeEnum ormType) {
-        if (StringUtils.isNotEmpty(this.daoModuleName) && !this.entity.contains(this.daoModuleName)) {
-            this.entity = this.daoModuleName + "." + this.entity;
-            this.mapper = this.daoModuleName + "." + this.mapper;
-        }
+        
 
         if (StringUtils.isEmpty(this.commonResultClass)) {
             this.commonResultClass = this.parent + "." + this.common + "." +
                     TemplateFilesEnum.COMMON_RESULT.getFileName().replace(".java", "");
+        }
+
+        // 初始化分页相关配置
+        if (StringUtils.isEmpty(this.pageInfoClass)) {
+            this.pageInfoClass = "com.github.pagehelper.PageInfo";
+        }
+
+        if (StringUtils.isEmpty(this.pageRequestClass)) {
+            this.pageRequestClass = "com.github.pagehelper.PageRequest";
         }
 
         switch (ormType) {
@@ -112,6 +133,16 @@ public class DefaultPackageConfig {
 //                    TemplateFilesEnum.BASE_MAPPER.getFileName().split("\\.")[0];
             this.superMapperClass = "io.mybatis.mapper.BaseMapper";
             this.isDefaultSuperMapper = true;
+        }
+        
+        if (StringUtils.isEmpty(this.superServiceClass)) {
+            // 设置MyBatis的BaseService接口
+            this.superServiceClass = this.parent + "." + this.common + ".BaseService";
+        }
+        
+        if (StringUtils.isEmpty(this.superServiceImplClass)) {
+            // 设置MyBatis的BaseServiceImpl类
+            this.superServiceImplClass = this.parent + "." + this.common + ".BaseServiceImpl";
         }
     }
 

@@ -16,20 +16,17 @@ import java.util.Map;
 public class PathBuilderUtil {
 
     public static Map<OutputFile, String> buildPaths(ProjectInfo projectInfo, DefaultPackageConfig packageConfig) {
-        boolean multiModule = projectInfo.getParameters().isMultiModule();
         String baseDirPath = projectInfo.getBaseDirPath();
-        Map<ModuleNameEnum, String> moduleNamesMap = multiModule ? ModuleNameEnum.getAllModuleNamesMap(
-                projectInfo.getBaseProjectName()) : new HashMap<>();
 
         Map<OutputFile, String> pathInfo = new HashMap<>();
-        String daoBase = buildPath(baseDirPath, moduleNamesMap.getOrDefault(ModuleNameEnum.DAO, ""));
+        String daoBase = buildPath(baseDirPath, "");
         String entityPath = buildPath(daoBase, CommonConsts.JAVA_SRC_DIR, packageConfig.getParent(), packageConfig.getEntity());
         String mapperPath = buildPath(daoBase, CommonConsts.JAVA_SRC_DIR, packageConfig.getParent(), packageConfig.getMapper());
-        String servicePath = buildPath(baseDirPath, moduleNamesMap.getOrDefault(ModuleNameEnum.SERVICE, ""), CommonConsts.JAVA_SRC_DIR,
+        String servicePath = buildPath(baseDirPath, "", CommonConsts.JAVA_SRC_DIR,
                 packageConfig.getParent(), packageConfig.getService());
-        String serviceImplPath = buildPath(baseDirPath, moduleNamesMap.getOrDefault(ModuleNameEnum.SERVICE, ""), CommonConsts.JAVA_SRC_DIR,
+        String serviceImplPath = buildPath(baseDirPath, "", CommonConsts.JAVA_SRC_DIR,
                 packageConfig.getParent(), packageConfig.getServiceImpl());
-        String controllerPath = buildPath(baseDirPath, moduleNamesMap.getOrDefault(ModuleNameEnum.WEB, ""), CommonConsts.JAVA_SRC_DIR,
+        String controllerPath = buildPath(baseDirPath, "", CommonConsts.JAVA_SRC_DIR,
                 packageConfig.getParent(), packageConfig.getController());
 
         pathInfo.put(OutputFile.entity, entityPath);
@@ -44,11 +41,9 @@ public class PathBuilderUtil {
     }
 
     public static String buildPath(ProjectInfo projectInfo, DefaultPackageConfig packageConfig,
-                                   ModuleNameEnum moduleNameEnum, String subPackage) {
-        boolean multiModule = projectInfo.getParameters().isMultiModule();
+                                   String subPackage) {
         String baseDirPath = projectInfo.getBaseDirPath();
-        String baseProjectName = projectInfo.getBaseProjectName();
-        return buildPath(baseDirPath, multiModule ? moduleNameEnum.getModuleName(baseProjectName) : "", CommonConsts.JAVA_SRC_DIR,
+        return buildPath(baseDirPath, "", CommonConsts.JAVA_SRC_DIR,
                 packageConfig.getParent(), subPackage);
     }
 
@@ -59,18 +54,14 @@ public class PathBuilderUtil {
      * @param moduleNameEnum
      * @return 资源路径
      */
-    public static String buildResourcePath(ProjectInfo projectInfo, ModuleNameEnum moduleNameEnum, String subPackage) {
-        boolean multiModule = projectInfo.getParameters().isMultiModule();
+    public static String buildResourcePath(ProjectInfo projectInfo, String subPackage) {
         String baseDirPath = projectInfo.getBaseDirPath();
-        String baseProjectName = projectInfo.getBaseProjectName();
-        return buildPath(baseDirPath, multiModule ? moduleNameEnum.getModuleName(baseProjectName) : "", CommonConsts.SRC_RESOURCE, subPackage);
+        return buildPath(baseDirPath, "", CommonConsts.SRC_RESOURCE, subPackage);
     }
 
-    public static String buildPomPath(ProjectInfo projectInfo, ModuleNameEnum moduleNameEnum) {
-        boolean multiModule = projectInfo.getParameters().isMultiModule();
+    public static String buildPomPath(ProjectInfo projectInfo) {
         String baseDirPath = projectInfo.getBaseDirPath();
-        String baseProjectName = projectInfo.getBaseProjectName();
-        return buildPath(baseDirPath, multiModule ? moduleNameEnum.getModuleName(baseProjectName) : "") + "/pom.xml";
+        return buildPath(baseDirPath, "") + "/pom.xml";
     }
 //
 //    public static String buildManagerPath(ProjectInfo projectInfo, DefaultPackageConfig packageConfig) {

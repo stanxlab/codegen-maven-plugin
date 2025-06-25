@@ -2,6 +2,7 @@ package ${package.Service};
 
 import com.github.pagehelper.PageInfo;
 import ${package.Entity}.${entity};
+import ${superServiceClassPackage};
 import java.util.List;
 
 /**
@@ -12,17 +13,6 @@ import java.util.List;
  * @author ${author}
  * @since ${date}
  */
-public interface ${table.serviceName} {
+public interface ${table.serviceName} extends ${superServiceClass}<${entity}, Long> {
 
-    PageInfo<${entity}> page(Integer pageNo, Integer pageSize);
-
-    List<${entity}> list();
-
-    ${entity} getById(Long id);
-
-    Boolean save(${entity} ${lowEntityName});
-
-    Boolean updateById(${entity} ${lowEntityName});
-
-    Boolean removeById(Long id);
 }

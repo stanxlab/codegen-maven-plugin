@@ -9,6 +9,6 @@ package ${cfg.managerPackage};
  * @author ${author}
  * @since ${date}
  */
-public interface ${entity}Manager {
+public interface ${originalEntityName}Manager {
 
 }

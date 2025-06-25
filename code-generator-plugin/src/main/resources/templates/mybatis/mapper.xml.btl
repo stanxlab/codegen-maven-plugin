@@ -47,7 +47,7 @@
      <sql id="Base_Columns_With_Alias">
  <% for(field in table.fields){ %>
      <% if(!fieldLP.last){ %>
-         a.`${field.name}` AS AS ${field.propertyName},
+         a.`${field.name}` AS ${field.propertyName},
      <% } %>
      <% if(fieldLP.last){ %>
          a.`${field.name}` AS ${field.propertyName}

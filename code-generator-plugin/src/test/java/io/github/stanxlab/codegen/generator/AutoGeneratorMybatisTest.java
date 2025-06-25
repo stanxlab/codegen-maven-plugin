@@ -27,15 +27,7 @@ class AutoGeneratorMybatisTest extends BaseTest {
         new OtherFilesGenerator(projectInfo, ormType).execute();
     }
 
-    @Test
-    void testExecute_InitProject_Disable_MultiModule() {
-        Path path = getRandomPath();
-        ProjectInfo projectInfo = getProjectInfo(path, false);
-        new DefaultAutoGenerator(projectInfo, ormType).execute();
-        // 生成pom文件
-        new PomGenerator(projectInfo, ormType).execute();
-        new OtherFilesGenerator(projectInfo, ormType).execute();
-    }
+    
 
     @Test
     void testExecute_PomFile() {
@@ -59,28 +51,23 @@ class AutoGeneratorMybatisTest extends BaseTest {
         new DefaultAutoGenerator(projectInfo, ormType).execute();
     }
 
-    @Test
-    void testExecute_DefaultFiles_Disable_MultiModule() {
-        Path path = getRandomPath();
-        ProjectInfo projectInfo = getProjectInfo(path, false);
-        new DefaultAutoGenerator(projectInfo, ormType).execute();
-    }
+    
 
     @Test
-    void test_buildPaths_Disable_MultiModule() {
+    void test_buildPaths() {
         Path path = getRandomPath();
-        ProjectInfo projectInfo = getProjectInfo(path, false);
+        ProjectInfo projectInfo = getProjectInfo(path);
         Map<OutputFile, String> pathMap = PathBuilderUtil.buildPaths(projectInfo, new DefaultPackageConfig());
         System.out.println(pathMap);
     }
 
     protected ProjectInfo getProjectInfo(Path path) {
-        return getProjectInfo(path, true);
-    }
-
-    protected ProjectInfo getProjectInfo(Path path, boolean multiModule) {
         DefaultPackageConfig defaultPackageConfig = new DefaultPackageConfig();
-//        defaultPackageConfig.setSuperMapperClass("com.xxx.mybatis.mapper.BaseMapper");
+        defaultPackageConfig.setSuperMapperClass("com.fooo.mybatis.mapper.SmartBaseMapper");
+        defaultPackageConfig.setSuperServiceClass("com.fooo.mybatis.service.SmartBaseService");
+        defaultPackageConfig.setCommonResultClass("com.fooo.common.model.response.ResponseResult");
+        defaultPackageConfig.setPageInfoClass("com.fooo.common.page.PageInfo");
+        defaultPackageConfig.setPageRequestClass("com.fooo.common.model.page.PageRequest");
 
         ProjectInfo projectInfo = ProjectInfo.builder()
                 .baseDirPath(path.toString())
@@ -92,7 +79,6 @@ class AutoGeneratorMybatisTest extends BaseTest {
                         .tables("all")
                         .outputPackage("com.stanxlab.demo")
                         .dbInfo(dbInfo)
-                        .multiModule(multiModule) // 是否需要使用多模块
 //                        .templateType(TemplateTypeEnum.beetl) // 目前只支持beetl模板引擎
                         .packageConfig(defaultPackageConfig)
                         .build())

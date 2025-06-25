@@ -3,12 +3,10 @@ package ${package.ServiceImpl};
 <% if(entityLombokModel){ %>
 import lombok.extern.slf4j.Slf4j;
 <% } %>
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import ${package.Entity}.${entity};
-import ${package.Mapper}.${table.mapperName};
+import ${package.Mapper}.${originalMapperName};
 import ${package.Service}.${table.serviceName};
-import org.springframework.beans.factory.annotation.Autowired;
+import ${superServiceImplClassPackage};
 import org.springframework.stereotype.Service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,39 +26,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ${table.serviceImplName} implements ${table.serviceName} {
 
-    private final ${entity}Mapper ${lowEntityName}Mapper;
+    private final ${originalEntityName}Mapper ${lowEntityName}Mapper;
 
     @Override
-    public PageInfo<${entity}> page(Integer pageNo, Integer pageSize) {
-        return PageHelper.startPage(pageNo, pageSize)
-                .doSelectPageInfo(() -> ${lowEntityName}Mapper.selectList(null));
+    public ${originalEntityName}Mapper getMapper() {
+        return ${lowEntityName}Mapper;
     }
 
-    @Override
-    public List<${entity}> list() {
-        return ${lowEntityName}Mapper.selectList(null);
-    }
-
-    @Override
-    public ${entity} getById(Long id) {
-        return ${lowEntityName}Mapper.selectByPrimaryKey(id).orElse(null);
-    }
-
-    @Override
-    public Boolean save(${entity} ${lowEntityName}) {
-        ${lowEntityName}Mapper.insert(${lowEntityName});
-        return true;
-    }
-
-    @Override
-    public Boolean updateById(${entity} ${lowEntityName}) {
-        ${lowEntityName}Mapper.updateByPrimaryKey(${lowEntityName});
-        return true;
-    }
-
-    @Override
-    public Boolean removeById(Long id) {
-        ${lowEntityName}Mapper.deleteByPrimaryKey(id);
-        return true;
-    }
 }

@@ -3,7 +3,6 @@ package io.github.stanxlab.codegen.generator;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import io.github.stanxlab.codegen.entity.DbInfo;
-import io.github.stanxlab.codegen.entity.DefaultPackageConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public abstract class BaseTest {
@@ -43,13 +40,6 @@ public abstract class BaseTest {
         baseDir = new File(basedirPath);
     }
 
-
-    @Test
-    void testConfig() {
-        DefaultPackageConfig defaultPackageConfig = new DefaultPackageConfig();
-        System.out.println(defaultPackageConfig);
-        assertEquals("dao", defaultPackageConfig.getDaoModuleName());
-    }
 
     @Test
     void test() {

@@ -1,7 +1,7 @@
 package ${package.ServiceImpl};
 
 import ${package.Entity}.${entity};
-import ${package.Mapper}.${table.mapperName};
+import ${package.Mapper}.${originalMapperName};
 <% if(generateService){ %>
 import ${package.Service}.${table.serviceName};
 <% } %>
@@ -18,11 +18,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 <% if(kotlin){ %>
-open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>()<% if(generateService){ %>, ${table.serviceName}<% } %> {
+open class ${table.serviceImplName} : ${superServiceImplClass}<${originalMapperName}, ${entity}>()<% if(generateService){ %>, ${table.serviceName}<% } %> {
 
 }
 <% }else{ %>
-public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}><% if(generateService){ %> implements ${table.serviceName}<% } %> {
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${originalMapperName}, ${entity}><% if(generateService){ %> implements ${table.serviceName}<% } %> {
 
 }
 <% } %>

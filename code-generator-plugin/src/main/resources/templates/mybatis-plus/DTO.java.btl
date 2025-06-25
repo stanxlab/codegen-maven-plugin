@@ -1,4 +1,4 @@
-package ${facadePackage}.dto;
+package ${dtoPackage};
 
 
 <% if(isNotEmpty(superEntityClassPackage)){ %>
@@ -30,9 +30,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
-public class ${entity} extends ${superEntityClass} {
+public class ${originalEntityName} extends ${superEntityClass} {
 <% }else{ %>
-public class ${entity}DTO implements Serializable {
+public class ${originalEntityName}DTO implements Serializable {
 <% } %>
 
 <% if(entitySerialVersionUID){ %>
