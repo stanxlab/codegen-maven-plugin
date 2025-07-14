@@ -5,8 +5,8 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ${commonResultClass};
-import ${dtoPackage}.${entity}DTO;
-import ${managerPackage}.converter.${entity}Converter;
+import ${dtoPackage}.${originalEntityName}DTO;
+import ${managerPackage}.converter.${originalEntityName}Converter;
 <% if(isNotEmpty(superControllerClassPackage)){ %>
 import ${superControllerClassPackage};
 <% } %>
@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("<% if(isNotEmpty(moduleName)){ %>/${moduleName}<% } %>/${lowEntityName}")
 @RequiredArgsConstructor
-public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>extends ${superControllerName}<% } %> {
+public class ${originalEntityName}Controller <% if(isNotEmpty(superControllerName)){ %>extends ${superControllerName}<% } %> {
 
     private final ${table.serviceName} ${lowEntityName}Service;
 
@@ -46,9 +46,9 @@ public class ${entity}Controller <% if(isNotEmpty(superControllerName)){ %>exten
 
     @ApiOperation("详情")
     @GetMapping("/detail")
-    public ${commonResultClassName}<${entity}DTO> detail(@RequestParam Long id) {
+    public ${commonResultClassName}<${originalEntityName}DTO> detail(@RequestParam Long id) {
         ${entity} res = ${lowEntityName}Service.getById(id);
-        return ${commonResultClassName}.success(${entity}Converter.INSTANCE.to${entity}DTO(res));
+        return ${commonResultClassName}.success(${originalEntityName}Converter.INSTANCE.to${originalEntityName}DTO(res));
     }
 
     @ApiOperation("新增")

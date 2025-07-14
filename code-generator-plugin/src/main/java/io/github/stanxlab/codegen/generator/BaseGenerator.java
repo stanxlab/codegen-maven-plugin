@@ -123,17 +123,22 @@ public abstract class BaseGenerator {
             tablePrefix = new String[]{};
         }
 
+        String entitySuffix = packageConfig.getEntitySuffix();
         builder.addInclude(tables)
                 .addTablePrefix(tablePrefix)
-                .serviceBuilder().convertServiceFileName((entityName) -> entityName + "Service")
-                .serviceTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE)).serviceImplTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE_IMPL))
-                .superServiceClass(packageConfig.getSuperServiceClass()).superServiceImplClass(packageConfig.getSuperServiceImplClass())
+                .serviceBuilder()
+                    .convertServiceFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Service")
+                    .convertServiceImplFileName(entityName -> removeSuffix(entityName, entitySuffix) + "ServiceImpl")
+                .controllerBuilder()
+                    .convertFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Controller")
+                .mapperBuilder()
+                    .convertMapperFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Mapper")
                 .entityBuilder()
-                .nameConvert(new CustomEntityNameConvert(packageConfig.getEntitySuffix()))
-                .enableFileOverride()
-                .enableLombok()
-                .javaTemplate(getTemplateDefault(TemplateFilesEnum.ENTITY))
-                .build() // Add .build() to return to StrategyConfig.Builder
+                    .nameConvert(new CustomEntityNameConvert(entitySuffix))
+                    .enableFileOverride()
+                    .enableLombok()
+                    .javaTemplate(getTemplateDefault(TemplateFilesEnum.ENTITY))
+                .build()
                 .mapperBuilder().enableFileOverride().enableBaseColumnList().enableBaseResultMap().superClass(packageConfig.getSuperMapperClass())
                 .mapperTemplate(getTemplateDefault(TemplateFilesEnum.MAPPER))
                 .mapperXmlTemplate(getTemplateDefault(TemplateFilesEnum.XML));
@@ -200,29 +205,36 @@ public abstract class BaseGenerator {
         customMap.put("commonResultClass", packageConfig.getCommonResultClass());
         customMap.put("commonResultClassName", getCommonResultClassName());
 
+        // 移除 customMap.put("originalEntityName", ...) 的 lambda，改为 beforeOutputFile 阶段注入
+
         List<CustomFile> list = new ArrayList<>();
 
         list.add(new CustomFile.Builder()
-                .fileName(TemplateFilesEnum.DTO.getFileName())
+                // DTO 文件名：UserDTO.java
+                .formatNameFunction(tableInfo -> toCamelCaseUpperFirst(tableInfo.getName()) + "DTO")
+                .fileName("DTO.java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.DTO))
                 .filePath(dtoPath)
                 .build());
 
-        // manager层 Converter
+        // manager层 Converter 文件名：UserConverter.java
         list.add(new CustomFile.Builder()
-                .fileName(TemplateFilesEnum.CONVERTER.getFileName())
+                .formatNameFunction(tableInfo -> toCamelCaseUpperFirst(tableInfo.getName()) + "Converter")
+                .fileName("Converter.java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.CONVERTER))
                 .filePath(converterPath)
                 .build());
 
+        // manager 文件名：UserManager.java
         list.add(new CustomFile.Builder()
-                // 通过格式化函数添加文件最后缀
-//                    .formatNameFunction(tableInfo -> "Prefix" + tableInfo.getEntityName() + "Suffix")
-                .fileName(StrUtil.upperFirst(TemplateFilesEnum.MANAGER.getFileName()))
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "Manager")
+                .fileName("Manager.java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.MANAGER))
                 .filePath(managerPath).build());
+        // managerImpl 文件名：UserManagerImpl.java
         list.add(new CustomFile.Builder()
-                .fileName(StrUtil.upperFirst(TemplateFilesEnum.MANAGER_IMPL.getFileName()))
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "ManagerImpl")
+                .fileName("ManagerImpl.java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.MANAGER_IMPL))
                 .filePath(managerImplPath).build());
 
@@ -233,6 +245,8 @@ public abstract class BaseGenerator {
                     // 首字母小写的实体名
                     objectMap.put("lowEntityName", StrUtil.lowerFirst(tableInfo.getEntityName()));
                     objectMap.put("lowMapperName", StrUtil.lowerFirst(tableInfo.getMapperName()));
+                    // 新增：原始 entity 名（无后缀），供 DTO/Converter 命名
+                    objectMap.put("originalEntityName", toCamelCaseUpperFirst(tableInfo.getName()));
                 })
                 .customMap(customMap)
                 .customFile(list)
@@ -289,4 +303,24 @@ public abstract class BaseGenerator {
         }
     }
 
+    // 工具方法：下划线转驼峰并首字母大写
+    private String toCamelCaseUpperFirst(String tableName) {
+        StringBuilder result = new StringBuilder();
+        for (String part : tableName.split("_")) {
+            if (part.isEmpty()) continue;
+            result.append(Character.toUpperCase(part.charAt(0)));
+            if (part.length() > 1) {
+                result.append(part.substring(1).toLowerCase());
+            }
+        }
+        return result.toString();
+    }
+
+    // 新增工具方法：去除 entitySuffix
+    private String removeSuffix(String name, String suffix) {
+        if (name != null && suffix != null && name.endsWith(suffix)) {
+            return name.substring(0, name.length() - suffix.length());
+        }
+        return name;
+    }
 }

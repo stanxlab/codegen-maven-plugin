@@ -16,5 +16,16 @@ interface ${table.serviceName} : ${superServiceClass}<${entity}>
 <% }else{ %>
 public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
 
+    IPage<${originalEntityName}> page(Page<${originalEntityName}> page);
+
+    List<${originalEntityName}> list();
+
+    ${originalEntityName} getById(Long id);
+
+    Boolean save(${originalEntityName} ${lowEntityName});
+
+    Boolean updateById(${originalEntityName} ${lowEntityName});
+
+    Boolean removeById(Long id);
 }
 <% } %>

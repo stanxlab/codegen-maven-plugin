@@ -14,15 +14,15 @@ import java.util.List;
  */
 public interface ${table.serviceName} {
 
-    PageInfo<${entity}> page(Integer pageNo, Integer pageSize);
+    PageInfo<${originalEntityName}> page(Integer pageNo, Integer pageSize);
 
-    List<${entity}> list();
+    List<${originalEntityName}> list();
 
-    ${entity} getById(Long id);
+    ${originalEntityName} getById(Long id);
 
-    Boolean save(${entity} ${lowEntityName});
+    Boolean save(${originalEntityName} ${lowEntityName});
 
-    Boolean updateById(${entity} ${lowEntityName});
+    Boolean updateById(${originalEntityName} ${lowEntityName});
 
     Boolean removeById(Long id);
 }
