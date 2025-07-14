@@ -1,4 +1,4 @@
-package ${facadePackage}.dto;
+package ${dtoPackage};
 
 
 <% if(isNotEmpty(superEntityClassPackage)){ %>

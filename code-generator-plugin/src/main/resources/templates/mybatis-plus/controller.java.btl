@@ -4,8 +4,8 @@ import javax.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ${commonResultClass};
-import ${facadePackage}.dto.${entity}DTO;
-import ${managerPackage}.converter.${entity}Converter;
+import ${dtoPackage}.${entity}DTO;
+import ${converterPackage}.${entity}Converter;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 <% if(isNotEmpty(superControllerClassPackage)){ %>

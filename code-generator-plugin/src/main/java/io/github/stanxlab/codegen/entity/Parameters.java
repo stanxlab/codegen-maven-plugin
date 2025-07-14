@@ -45,10 +45,7 @@ public class Parameters {
      */
     private boolean enableCrudCode = true;
 
-    /**
-     * 是否为多模块模式
-     */
-    private boolean multiModule = true;
+    
 
     /**
      * 数据库配置

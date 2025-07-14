@@ -1,8 +1,8 @@
-package ${cfg.managerPackage}.converter;
+package ${converterPackage};
 
 
 import ${package.Entity}.${entity};
-import ${facadePackage}.dto.${entity}DTO;
+import ${dtoPackage}.${entity}DTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

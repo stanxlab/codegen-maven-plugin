@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ${commonResultClass};
-import ${facadePackage}.dto.${entity}DTO;
+import ${dtoPackage}.${entity}DTO;
 import ${managerPackage}.converter.${entity}Converter;
 <% if(isNotEmpty(superControllerClassPackage)){ %>
 import ${superControllerClassPackage};

@@ -62,7 +62,7 @@ public class OtherFilesGenerator extends BaseGenerator {
         File file = null;
         // test包子路径
         String testPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.TEST, "");
+                "");
 
         TemplateFilesEnum filesEnum = TemplateFilesEnum.GIT_KEEP;
         file = new File(Paths.get(testPath, filesEnum.getFileName()).toString());
@@ -71,7 +71,7 @@ public class OtherFilesGenerator extends BaseGenerator {
 
         // 创建web包的子路径
         String webPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.WEB, "");
+                "");
 
         file = new File(Paths.get(webPath, "config", filesEnum.getFileName()).toString());
         outputFile(file, objectMap, getTemplateFilePath(filesEnum));
@@ -84,7 +84,7 @@ public class OtherFilesGenerator extends BaseGenerator {
 
         // 创建common包的子路径
         String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.COMMON, packageConfig.getCommon());
+                packageConfig.getCommon());
         file = new File(Paths.get(commonPath, "consts", filesEnum.getFileName()).toString());
         outputFile(file, objectMap, getTemplateFilePath(filesEnum));
 
@@ -97,7 +97,7 @@ public class OtherFilesGenerator extends BaseGenerator {
 
     private void outputCommonResult(Map<String, Object> objectMap) {
         String path = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.COMMON, packageConfig.getCommon() + File.separator);
+                packageConfig.getCommon() + File.separator);
 
         TemplateFilesEnum filesEnum = TemplateFilesEnum.COMMON_RESULT;
         File file = new File(path + filesEnum.getFileName());
@@ -111,7 +111,7 @@ public class OtherFilesGenerator extends BaseGenerator {
     private void outputStartupApplication(Map<String, Object> objectMap) {
         // web模块根路径
         String webPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.WEB, "");
+                "");
         log.info("---->webPath: {}", webPath);
         TemplateFilesEnum filesEnum = TemplateFilesEnum.APPLICATION;
         File applicationFile = new File(Paths.get(webPath, filesEnum.getFileName()).toString());
@@ -125,7 +125,7 @@ public class OtherFilesGenerator extends BaseGenerator {
         String parentPackage = this.packageConfig.getParent();
 
         // web 资源路径
-        String webResourcePath = PathBuilderUtil.buildResourcePath(this.projectInfo, ModuleNameEnum.WEB, "");
+        String webResourcePath = PathBuilderUtil.buildResourcePath(this.projectInfo, "");
 
         objectMap.put("entityPackage", parentPackage + StringUtil.DOT + this.packageConfig.getEntity());
         objectMap.put("xmlPath", PathBuilderUtil.replacePackageToPath(this.packageConfig.getXml()).replace("\\", "/"));

@@ -1,4 +1,4 @@
-package ${cfg.facadePackage}.dto;
+package ${cfg.dtoPackage};
 
 #foreach($pkg in ${table.importPackages})
 import ${pkg};

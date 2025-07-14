@@ -13,6 +13,7 @@ import io.github.stanxlab.codegen.entity.DbInfo;
 import io.github.stanxlab.codegen.entity.DefaultPackageConfig;
 import io.github.stanxlab.codegen.entity.ProjectInfo;
 import io.github.stanxlab.codegen.enums.*;
+import io.github.stanxlab.codegen.util.CustomEntityNameConvert;
 import io.github.stanxlab.codegen.util.PathBuilderUtil;
 import io.github.stanxlab.codegen.util.StringUtil;
 import lombok.Getter;
@@ -127,7 +128,12 @@ public abstract class BaseGenerator {
                 .serviceBuilder().convertServiceFileName((entityName) -> entityName + "Service")
                 .serviceTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE)).serviceImplTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE_IMPL))
                 .superServiceClass(packageConfig.getSuperServiceClass()).superServiceImplClass(packageConfig.getSuperServiceImplClass())
-                .entityBuilder().enableFileOverride().enableLombok().javaTemplate(getTemplateDefault(TemplateFilesEnum.ENTITY))
+                .entityBuilder()
+                .nameConvert(new CustomEntityNameConvert(packageConfig.getEntitySuffix()))
+                .enableFileOverride()
+                .enableLombok()
+                .javaTemplate(getTemplateDefault(TemplateFilesEnum.ENTITY))
+                .build() // Add .build() to return to StrategyConfig.Builder
                 .mapperBuilder().enableFileOverride().enableBaseColumnList().enableBaseResultMap().superClass(packageConfig.getSuperMapperClass())
                 .mapperTemplate(getTemplateDefault(TemplateFilesEnum.MAPPER))
                 .mapperXmlTemplate(getTemplateDefault(TemplateFilesEnum.XML));
@@ -175,23 +181,21 @@ public abstract class BaseGenerator {
         // 自定义变量
         Map<String, Object> customMap = new HashMap<>();
 
-        String managerPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.MANAGER, packageConfig.getManager());
-        String managerImplPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.MANAGER, packageConfig.getManagerImpl());
+        String managerPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getManager());
+        String managerImplPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getManagerImpl());
 
-        String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.COMMON, packageConfig.getCommon());
-        String facadePath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig,
-                ModuleNameEnum.FACADE, packageConfig.getFacade());
+        String commonPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getCommon());
+        String dtoPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getDto());
+        String converterPath = PathBuilderUtil.buildPath(this.projectInfo, packageConfig, packageConfig.getConverter());
 
-        customMap.put("multiModule", this.projectInfo.getParameters().isMultiModule());
+        customMap.put("multiModule", false);
         customMap.put("enableCrudCode", this.projectInfo.getParameters().isEnableCrudCode());
         customMap.put("parentPackage", packageConfig.getParent());
         customMap.put("commonPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getCommon());
         customMap.put("managerPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getManager());
         customMap.put("managerImplPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getManagerImpl());
-        customMap.put("facadePackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getFacade());
+        customMap.put("dtoPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getDto());
+        customMap.put("converterPackage", packageConfig.getParent() + StringUtil.DOT + packageConfig.getConverter());
         customMap.put("isDefaultSuperMapper", packageConfig.isDefaultSuperMapper());
         customMap.put("commonResultClass", packageConfig.getCommonResultClass());
         customMap.put("commonResultClassName", getCommonResultClassName());
@@ -201,16 +205,14 @@ public abstract class BaseGenerator {
         list.add(new CustomFile.Builder()
                 .fileName(TemplateFilesEnum.DTO.getFileName())
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.DTO))
-                .filePath(facadePath)
-                .packageName("dto")
+                .filePath(dtoPath)
                 .build());
 
         // manager层 Converter
         list.add(new CustomFile.Builder()
                 .fileName(TemplateFilesEnum.CONVERTER.getFileName())
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.CONVERTER))
-                .filePath(managerPath)
-                .packageName("converter")
+                .filePath(converterPath)
                 .build());
 
         list.add(new CustomFile.Builder()
@@ -226,6 +228,8 @@ public abstract class BaseGenerator {
 
         return builder
                 .beforeOutputFile((tableInfo, objectMap) -> {
+                    log.info("beforeOutputFile: tableInfo.getEntityName() = {}", tableInfo.getEntityName());
+                    log.info("beforeOutputFile: tableInfo.getFields() = {}", tableInfo.getFields());
                     // 首字母小写的实体名
                     objectMap.put("lowEntityName", StrUtil.lowerFirst(tableInfo.getEntityName()));
                     objectMap.put("lowMapperName", StrUtil.lowerFirst(tableInfo.getMapperName()));

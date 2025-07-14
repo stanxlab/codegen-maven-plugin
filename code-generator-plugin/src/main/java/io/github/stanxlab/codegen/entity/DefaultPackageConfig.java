@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class DefaultPackageConfig {
     private String parent = "com.stanz.demo";
-    private String daoModuleName = "dao";
     private String entity = "entity";
     private String mapper = "mapper";
     private String xml = "mapper.mysql";
@@ -21,9 +20,15 @@ public class DefaultPackageConfig {
     private String serviceImpl = "service.impl";
     private String controller = "controller";
     private String common = "common";
-    private String facade = "facade";
     private String manager = "manager";
     private String managerImpl = "manager.impl";
+    private String dto = "dto";
+    private String converter = "converter";
+
+    /**
+     * 实体后缀
+     */
+    private String entitySuffix = "PO";
 
     /**
      * 自定义继承的Mapper类全称，带包名
@@ -71,10 +76,7 @@ public class DefaultPackageConfig {
     private boolean isDefaultSuperMapper = false;
 
     public void init(ORMTypeEnum ormType) {
-        if (StringUtils.isNotEmpty(this.daoModuleName) && !this.entity.contains(this.daoModuleName)) {
-            this.entity = this.daoModuleName + "." + this.entity;
-            this.mapper = this.daoModuleName + "." + this.mapper;
-        }
+        
 
         if (StringUtils.isEmpty(this.commonResultClass)) {
             this.commonResultClass = this.parent + "." + this.common + "." +

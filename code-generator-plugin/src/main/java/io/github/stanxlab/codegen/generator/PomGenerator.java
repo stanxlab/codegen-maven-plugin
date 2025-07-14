@@ -32,37 +32,17 @@ public class PomGenerator extends BaseGenerator {
 
     @Override
     public void execute() {
-        boolean multiModule = this.projectInfo.getParameters().isMultiModule();
-
-        // 生成各个模块的pom
-        for (ModuleNameEnum moduleNameEnum : ModuleNameEnum.values()) {
-            String curPomFile = PathBuilderUtil.buildPomPath(this.projectInfo, moduleNameEnum);
-            if (ModuleNameEnum.PARENT.equals(moduleNameEnum)) {
-                genParentPom(curPomFile);
-                continue;
-            }
-
-            // 多模块时才存在其他pom
-            if (multiModule) {
-                outputPomFile(curPomFile, getContext(moduleNameEnum));
-            }
-        }
+        String pomFile = PathBuilderUtil.buildPomPath(this.projectInfo);
+        genParentPom(pomFile);
     }
 
     private void genParentPom(String parentPomFile) {
-        boolean multiModule = this.projectInfo.getParameters().isMultiModule();
         boolean bakPomSuccess = copyBackupParentPomFile(parentPomFile);
 
         // 生成主pom
-        Map<String, Object> context = getContext(ModuleNameEnum.PARENT);
+        Map<String, Object> context = getContext();
 
-        if (multiModule) {
-            String[] allModuleNames = ModuleNameEnum.getAllModuleNames(this.projectInfo.getBaseProjectName());
-            context.put("allModuleNames", Arrays.asList(allModuleNames));
-        } else {
-            context.put("allModuleNames", Collections.EMPTY_LIST);
-        }
-
+        context.put("allModuleNames", Collections.EMPTY_LIST);
         context.put("isParent", true);
         context.put("artifactId", this.projectInfo.getBaseProjectName());
 
@@ -110,29 +90,21 @@ public class PomGenerator extends BaseGenerator {
         return false;
     }
 
-    private Map<String, Object> getContext(ModuleNameEnum moduleNameEnum) {
-        String moduleName = moduleNameEnum.getModuleName(this.projectInfo.getBaseProjectName());
-
+    private Map<String, Object> getContext() {
         // 准备数据模型
         Map<String, Object> context = new HashMap<>();
         context.put("groupId", this.projectInfo.getParameters().getOutputPackage());
-        context.put("artifactId", moduleName);
         context.put("isParent", false);
-        context.put("multiModule", this.projectInfo.getParameters().isMultiModule());
+        context.put("multiModule", false);
         context.put("parentArtifactId", this.projectInfo.getBaseProjectName());
 
-        context.put("isStartModule", moduleNameEnum.equals(ModuleNameEnum.WEB));
+        context.put("isStartModule", true); // Single module is always a start module
         context.put("revision", "${revision}");
         context.put("spring_version", "${spring-boot.version}");
 
 
         DependencyManager dependencyManager = new DependencyManager(this.projectInfo, this.ormType);
-        List<Map<String, String>> dependenciesList;
-        if (ModuleNameEnum.PARENT.equals(moduleNameEnum)) {
-            dependenciesList = dependencyManager.getAllDependenciesList();
-        } else {
-            dependenciesList = dependencyManager.getModuleDependenciesList(moduleNameEnum);
-        }
+        List<Map<String, String>> dependenciesList = dependencyManager.getAllDependenciesList();
 
         // 将依赖项集合放入VelocityContext
         context.put("dependencies", dependenciesList);
