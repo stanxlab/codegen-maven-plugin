@@ -129,6 +129,8 @@ public abstract class BaseGenerator {
                 .serviceBuilder()
                     .convertServiceFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Service")
                     .convertServiceImplFileName(entityName -> removeSuffix(entityName, entitySuffix) + "ServiceImpl")
+                    .serviceTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE))
+                    .serviceImplTemplate(getTemplateDefault(TemplateFilesEnum.SERVICE_IMPL))
                 .controllerBuilder()
                     .convertFileName(entityName -> removeSuffix(entityName, entitySuffix) + "Controller")
                 .mapperBuilder()
@@ -210,43 +212,46 @@ public abstract class BaseGenerator {
         List<CustomFile> list = new ArrayList<>();
 
         list.add(new CustomFile.Builder()
-                // DTO 文件名：UserDTO.java
-                .formatNameFunction(tableInfo -> toCamelCaseUpperFirst(tableInfo.getName()) + "DTO")
-                .fileName("DTO.java")
+                // DTO 文件名：UserDTO.java (formatNameFunction返回"UserDTO", fileName是".java")
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "DTO")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.DTO))
                 .filePath(dtoPath)
                 .build());
 
-        // manager层 Converter 文件名：UserConverter.java
+        // manager层 Converter 文件名：UserConverter.java (formatNameFunction返回"UserConverter", fileName是".java")
         list.add(new CustomFile.Builder()
-                .formatNameFunction(tableInfo -> toCamelCaseUpperFirst(tableInfo.getName()) + "Converter")
-                .fileName("Converter.java")
+                .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "Converter")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.CONVERTER))
                 .filePath(converterPath)
                 .build());
 
-        // manager 文件名：UserManager.java
+        // manager 文件名：UserManager.java (formatNameFunction返回"UserManager", fileName是".java")
+/**
         list.add(new CustomFile.Builder()
                 .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "Manager")
-                .fileName("Manager.java")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.MANAGER))
                 .filePath(managerPath).build());
-        // managerImpl 文件名：UserManagerImpl.java
+        // managerImpl 文件名：UserManagerImpl.java (formatNameFunction返回"UserManagerImpl", fileName是".java")
         list.add(new CustomFile.Builder()
                 .formatNameFunction(tableInfo -> removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix()) + "ManagerImpl")
-                .fileName("ManagerImpl.java")
+                .fileName(".java")
                 .templatePath(getTemplateFilePath(TemplateFilesEnum.MANAGER_IMPL))
                 .filePath(managerImplPath).build());
+ */
 
         return builder
                 .beforeOutputFile((tableInfo, objectMap) -> {
                     log.info("beforeOutputFile: tableInfo.getEntityName() = {}", tableInfo.getEntityName());
                     log.info("beforeOutputFile: tableInfo.getFields() = {}", tableInfo.getFields());
-                    // 首字母小写的实体名
-                    objectMap.put("lowEntityName", StrUtil.lowerFirst(tableInfo.getEntityName()));
+                    // 原始 entity 名（无后缀），供 DTO/Converter 命名，确保去除实体后缀
+                    String originalEntityName = removeSuffix(toCamelCaseUpperFirst(tableInfo.getName()), packageConfig.getEntitySuffix());
+                    // 首字母小写的实体名（基于原始名，不包含后缀）
+                    objectMap.put("lowEntityName", StrUtil.lowerFirst(originalEntityName));
                     objectMap.put("lowMapperName", StrUtil.lowerFirst(tableInfo.getMapperName()));
-                    // 新增：原始 entity 名（无后缀），供 DTO/Converter 命名
-                    objectMap.put("originalEntityName", toCamelCaseUpperFirst(tableInfo.getName()));
+                    objectMap.put("originalEntityName", originalEntityName);
                 })
                 .customMap(customMap)
                 .customFile(list)
