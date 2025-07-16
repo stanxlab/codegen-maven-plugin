@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.stanxlab</groupId>
+    <artifactId>mybatis-single-example</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <description>单模块生成示例</description>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.stanxlab</groupId>
+                <artifactId>codegen</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <parameters>
+                        <!--  目前只支持beetl模板引擎  -->
+                        <templateType>beetl</templateType>
+                        <packageConfig>
+                            <!--  Mapper的基类  -->
+                            <superMapperClass>com.fooo.mybatis.mapper.SmartBaseMapper</superMapperClass>
+                            <!--  Service的基类  -->
+                            <superServiceClass>com.fooo.mybatis.service.SmartBaseService</superServiceClass>
+                            <!--  通用返回结果类  -->
+                            <commonResultClass>com.fooo.common.model.response.ResponseResult</commonResultClass>
+                            <!--  分页结果类  -->
+                            <pageInfoClass>com.fooo.common.page.PageInfo</pageInfoClass>
+                            <!--  分页请求类  -->
+                            <pageRequestClass>com.fooo.common.model.page.PageRequest</pageRequestClass>
+                        </packageConfig>
+                        <!--  配置表前缀，生成的实体类名会剔除前缀  -->
+                        <!-- <tablePrefix>cms_</tablePrefix>-->
+                        <dbInfo>
+                            <!--  数据库连接信息  -->
+                            <url>jdbc:mysql://192.168.2.229:3306/test?useUnicode=true</url>
+                            <username>test</username>
+                            <password>a123456</password>
+                        </dbInfo>
+                    </parameters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

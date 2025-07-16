@@ -72,12 +72,9 @@ class AutoGeneratorMybatisTest extends BaseTest {
         ProjectInfo projectInfo = ProjectInfo.builder()
                 .baseDirPath(path.toString())
                 .baseDir(baseDir)
-                .baseProjectName("demo")
-                .initialProject(true)
                 .parameters(Parameters.builder()
                         .author("stanxlab")
                         .tables("all")
-                        .outputPackage("com.stanxlab.demo")
                         .dbInfo(dbInfo)
 //                        .templateType(TemplateTypeEnum.beetl) // 目前只支持beetl模板引擎
                         .packageConfig(defaultPackageConfig)

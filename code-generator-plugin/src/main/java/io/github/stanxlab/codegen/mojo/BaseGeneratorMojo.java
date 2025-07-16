@@ -53,6 +53,24 @@ public abstract class BaseGeneratorMojo extends AbstractMojo {
             boolean initialProject = checkInitialProject();
             this.parameters = Optional.ofNullable(this.parameters).orElse(new Parameters());
             
+            // 从Maven项目信息中获取默认值
+            if (this.parameters.getOutputPackage() == null) {
+                // 如果没有配置outputPackage或使用默认值，则使用项目的groupId
+                String groupId = this.project.getGroupId();
+                if (groupId != null && !groupId.isEmpty()) {
+                    this.parameters.setOutputPackage(groupId);
+                    getLog().info("自动设置 outputPackage 为: " + groupId);
+                }
+            }
+            
+            if (this.parameters.getBaseProjectName() == null) {
+                // 如果没有配置baseProjectName或使用默认值，则使用项目的artifactId
+                String artifactId = this.project.getArtifactId();
+                if (artifactId != null && !artifactId.isEmpty()) {
+                    this.parameters.setBaseProjectName(artifactId);
+                    getLog().info("自动设置 baseProjectName 为: " + artifactId);
+                }
+            }
 
             ProjectInfo projectInfo = new ProjectInfo();
             projectInfo.setParameters(this.parameters);

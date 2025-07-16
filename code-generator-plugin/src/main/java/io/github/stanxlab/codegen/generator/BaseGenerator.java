@@ -21,6 +21,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import java.io.File;
 import java.util.*;
 import java.util.function.Function;
@@ -113,7 +118,9 @@ public abstract class BaseGenerator {
         String configTables = this.projectInfo.getParameters().getTables();
         List<String> tables;
         if (StringUtils.isEmpty(configTables)) {
-            tables = getTables(scanner.apply("请输入表名，多个英文逗号分隔，所有表请输入 all"));
+            // 在用户输入表名之前，显示数据库中的所有表名
+            displayAllTableNames();
+            tables = getTablesFromUserInput();
         } else {
             tables = getTables(configTables);
         }
@@ -160,6 +167,108 @@ public abstract class BaseGenerator {
         }
 
         return builder.build();
+    }
+
+    /**
+     * 显示数据库中的所有表名
+     */
+    private void displayAllTableNames() {
+        try {
+            DbInfo dbInfo = projectInfo.getParameters().getDbInfo();
+            String url = dbInfo.getUrl();
+            String username = dbInfo.getUsername();
+            String password = dbInfo.getPassword();
+
+            // 加载数据库驱动
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            // 建立数据库连接
+            try (java.sql.Connection connection = java.sql.DriverManager.getConnection(url, username, password)) {
+                // 查询所有表名
+                String sql = "SHOW TABLES";
+                try (java.sql.PreparedStatement statement = connection.prepareStatement(sql);
+                     java.sql.ResultSet resultSet = statement.executeQuery()) {
+                    
+                    System.out.println("\n==================== 数据库中的表名 ====================");
+                    boolean hasTable = false;
+                    while (resultSet.next()) {
+                        String tableName = resultSet.getString(1);
+                        System.out.println(tableName);
+                        hasTable = true;
+                    }
+                    
+                    if (!hasTable) {
+                        System.out.println("数据库中没有表");
+                    }
+                    System.out.println("========================================================\n");
+                }
+            }
+        } catch (Exception e) {
+            log.warn("无法获取数据库表名: {}", e.getMessage());
+            System.out.println("注意：无法获取数据库表名，请检查数据库连接配置");
+        }
+    }
+
+    /**
+     * 从用户输入获取表名，支持多行输入
+     */
+    private List<String> getTablesFromUserInput() {
+        try {
+            java.util.Scanner scanner = new java.util.Scanner(System.in);
+            System.out.println("请输入表名：");
+            System.out.println("  • 可以每行输入一个表名");
+            System.out.println("  • 也可以用英文逗号分隔多个表名");
+            System.out.println("  • 输入 'all' 生成所有表");
+            System.out.println("  • 输入空行结束输入");
+            System.out.print("> ");
+            
+            List<String> inputLines = new ArrayList<>();
+            String line;
+            
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine().trim();
+                if (line.isEmpty()) {
+                    break;
+                }
+                inputLines.add(line);
+                System.out.print("> ");
+            }
+            
+            if (inputLines.isEmpty()) {
+                System.out.println("没有输入任何表名，将生成所有表");
+                return Collections.emptyList();
+            }
+            
+            // 处理输入的表名
+            List<String> tableNames = new ArrayList<>();
+            for (String inputLine : inputLines) {
+                if ("all".equalsIgnoreCase(inputLine.trim())) {
+                    // 如果任何一行是 "all"，则返回空列表（表示所有表）
+                    return Collections.emptyList();
+                }
+                
+                // 检查是否包含逗号分隔的表名
+                if (inputLine.contains(",")) {
+                    String[] tables = inputLine.split(",");
+                    for (String table : tables) {
+                        String trimmedTable = table.trim();
+                        if (!trimmedTable.isEmpty()) {
+                            tableNames.add(trimmedTable);
+                        }
+                    }
+                } else {
+                    // 单个表名
+                    tableNames.add(inputLine.trim());
+                }
+            }
+            
+            return tableNames;
+            
+        } catch (Exception e) {
+            log.error("读取用户输入时出现错误: {}", e.getMessage());
+            System.out.println("输入错误，将生成所有表");
+            return Collections.emptyList();
+        }
     }
 
     protected String getTemplateFilePath(TemplateFilesEnum fileType) {
