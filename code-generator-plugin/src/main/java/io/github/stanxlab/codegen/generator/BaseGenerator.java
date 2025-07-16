@@ -12,7 +12,10 @@ import com.baomidou.mybatisplus.generator.util.FileUtils;
 import io.github.stanxlab.codegen.entity.DbInfo;
 import io.github.stanxlab.codegen.entity.DefaultPackageConfig;
 import io.github.stanxlab.codegen.entity.ProjectInfo;
-import io.github.stanxlab.codegen.enums.*;
+import io.github.stanxlab.codegen.enums.ORMTypeEnum;
+import io.github.stanxlab.codegen.enums.TemplateFilesEnum;
+import io.github.stanxlab.codegen.enums.TemplatePathEnum;
+import io.github.stanxlab.codegen.enums.TemplateTypeEnum;
 import io.github.stanxlab.codegen.util.CustomEntityNameConvert;
 import io.github.stanxlab.codegen.util.PathBuilderUtil;
 import io.github.stanxlab.codegen.util.StringUtil;
@@ -20,11 +23,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 import java.io.File;
 import java.util.*;
@@ -235,8 +233,8 @@ public abstract class BaseGenerator {
             }
             
             if (inputLines.isEmpty()) {
-                System.out.println("没有输入任何表名，将生成所有表");
-                return Collections.emptyList();
+                System.out.println("没有输入任何表名，请重新输入");
+                return getTablesFromUserInput();
             }
             
             // 处理输入的表名

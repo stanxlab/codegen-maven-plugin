@@ -3,12 +3,11 @@ package io.github.stanxlab.codegen.mojo;
 import io.github.stanxlab.codegen.enums.ORMTypeEnum;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * mybatis-plus 表实体类生成
  */
-@Mojo(name = "mybatis-plus:tables")
+//@Mojo(name = "MybatisPlus:tables")
 public class MyBatisPlusTablesMojo extends BaseGeneratorMojo {
 
     @Override

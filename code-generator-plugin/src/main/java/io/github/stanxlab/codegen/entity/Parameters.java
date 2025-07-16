@@ -17,12 +17,12 @@ public class Parameters {
     /**
      * default: com.stanxlab.demo
      */
-    private String outputPackage = "com.stanxlab.demo";
+    private String outputPackage = null;
 
     /**
      * default: codegen
      */
-    private String baseProjectName = "codegen";
+    private String baseProjectName = null;
 
     private String author = SystemUtil.get("user.name", false);
 

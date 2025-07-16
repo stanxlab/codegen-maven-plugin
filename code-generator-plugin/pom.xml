@@ -6,10 +6,10 @@
 
     <groupId>io.github.stanxlab</groupId>
     <artifactId>codegen</artifactId>
-    <version>2.0.01</version>
+    <version>2.0.02</version>
     <packaging>maven-plugin</packaging>
     <name>codegen</name>
-    <description>代码生成器maven插件，用于初始化多模块spring项目，以及生成模版代码，支持mybatis和mybtis-plus。</description>
+    <description>代码生成器maven插件，用于生成DAO模版代码，默认使用mybatis-mapper和PageHelper。</description>
 
     <properties>
         <serverId>central</serverId>

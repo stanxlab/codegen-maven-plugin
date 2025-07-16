@@ -3,12 +3,11 @@ package io.github.stanxlab.codegen.mojo;
 import io.github.stanxlab.codegen.enums.ORMTypeEnum;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * mybatis-plus初始化项目
  */
-@Mojo(name = "mybatis-plus:init-project")
+//@Mojo(name = "mybatis-plus:init-project")
 public class MyBatisPlusInitMojo extends BaseGeneratorMojo {
 
     @Override
