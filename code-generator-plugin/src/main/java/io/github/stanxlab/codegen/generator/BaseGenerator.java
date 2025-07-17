@@ -222,9 +222,7 @@ public abstract class BaseGenerator {
             System.out.println("  • 也可以用英文逗号分隔多个表名");
             System.out.println("  • 输入 'all' 生成所有表");
             System.out.println("  • 输入空行结束输入");
-            System.out.print("> ");
-            System.out.flush(); // 强制刷新输出缓冲区
-            
+
             List<String> inputLines = new ArrayList<>();
             String line;
             
@@ -234,8 +232,6 @@ public abstract class BaseGenerator {
                     break;
                 }
                 inputLines.add(line);
-                System.out.print("> ");
-                System.out.flush(); // 强制刷新输出缓冲区
             }
             
             if (inputLines.isEmpty()) {

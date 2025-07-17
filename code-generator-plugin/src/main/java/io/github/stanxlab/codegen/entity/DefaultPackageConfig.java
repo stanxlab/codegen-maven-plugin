@@ -26,9 +26,9 @@ public class DefaultPackageConfig {
     private String converter = "converter";
 
     /**
-     * 实体后缀
+     * 实体后缀，默认为空
      */
-    private String entitySuffix = "PO";
+    private String entitySuffix = "";
 
     /**
      * 自定义继承的Mapper类全称，带包名

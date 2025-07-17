@@ -12,40 +12,73 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- 代码生成器默认配置属性 -->
+        <codegen.version>2.0.03</codegen.version>
+        <codegen.enableCrudCode>false</codegen.enableCrudCode>
+
+        <!-- 数据库默认配置 -->
+        <codegen.db.url>${env.TEST_MYSQL_URL}</codegen.db.url>
+        <codegen.db.username>${env.TEST_MYSQL_USER}</codegen.db.username>
+        <codegen.db.password>${env.TEST_MYSQL_PASSWORD}</codegen.db.password>
+
+        <!-- 包配置默认值 -->
+        <codegen.package.entitySuffix>DO</codegen.package.entitySuffix>
+        <codegen.package.enableController>false</codegen.package.enableController>
+        <codegen.package.enableService>true</codegen.package.enableService>
+        <codegen.package.enableManager>true</codegen.package.enableManager>
     </properties>
 
     <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>io.github.stanxlab</groupId>
+                    <artifactId>codegen</artifactId>
+                    <version>${codegen.version}</version>
+                    <configuration>
+                        <parameters>
+                            <!-- 基础配置 -->
+                            <lombokModel>true</lombokModel>
+                            <enableCrudCode>${codegen.enableCrudCode}</enableCrudCode>
+                            <!-- 包配置 -->
+                            <packageConfig>
+                                <!-- 实体类文件夹名称 -->
+                                <entity>model</entity>
+                                <!-- 实体类后缀配置 -->
+                                <entitySuffix>${codegen.package.entitySuffix}</entitySuffix>
+
+                                <!-- 功能开关配置 -->
+                                <enableController>${codegen.package.enableController}</enableController>
+                                <enableService>${codegen.package.enableService}</enableService>
+                                <enableManager>${codegen.package.enableManager}</enableManager>
+
+                                <!-- 基类配置 -->
+                                <superMapperClass>com.stanxlab.mybatis.mapper.SmartBaseMapper</superMapperClass>
+                                <superServiceClass>com.stanxlab.mybatis.service.SmartBaseService</superServiceClass>
+                                <commonResultClass>com.stanxlab.common.model.response.ResponseResult</commonResultClass>
+                                <pageInfoClass>com.stanxlab.common.page.PageInfo</pageInfoClass>
+                                <pageRequestClass>com.stanxlab.common.model.page.PageRequest</pageRequestClass>
+                            </packageConfig>
+
+                            <!-- 数据库配置 -->
+                            <dbInfo>
+                                <url>${codegen.db.url}</url>
+                                <username>${codegen.db.username}</username>
+                                <password>${codegen.db.password}</password>
+                            </dbInfo>
+                        </parameters>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>io.github.stanxlab</groupId>
                 <artifactId>codegen</artifactId>
-                <version>1.0.3</version>
-                <configuration>
-                    <parameters>
-                        <!--  目前只支持beetl模板引擎  -->
-                        <templateType>beetl</templateType>
-                        <packageConfig>
-                            <!--  Mapper的基类  -->
-                            <superMapperClass>com.fooo.mybatis.mapper.SmartBaseMapper</superMapperClass>
-                            <!--  Service的基类  -->
-                            <superServiceClass>com.fooo.mybatis.service.SmartBaseService</superServiceClass>
-                            <!--  通用返回结果类  -->
-                            <commonResultClass>com.fooo.common.model.response.ResponseResult</commonResultClass>
-                            <!--  分页结果类  -->
-                            <pageInfoClass>com.fooo.common.page.PageInfo</pageInfoClass>
-                            <!--  分页请求类  -->
-                            <pageRequestClass>com.fooo.common.model.page.PageRequest</pageRequestClass>
-                        </packageConfig>
-                        <!--  配置表前缀，生成的实体类名会剔除前缀  -->
-                        <!-- <tablePrefix>cms_</tablePrefix>-->
-                        <dbInfo>
-                            <!--  数据库连接信息  -->
-                            <url>jdbc:mysql://192.168.2.229:3306/test?useUnicode=true</url>
-                            <username>test</username>
-                            <password>a123456</password>
-                        </dbInfo>
-                    </parameters>
-                </configuration>
+                <version>${codegen.version}</version>
             </plugin>
         </plugins>
     </build>
