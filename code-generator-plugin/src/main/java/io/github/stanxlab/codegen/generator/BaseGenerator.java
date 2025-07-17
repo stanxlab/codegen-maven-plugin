@@ -25,6 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.*;
 import java.util.function.Function;
 
@@ -219,6 +223,7 @@ public abstract class BaseGenerator {
             System.out.println("  • 输入 'all' 生成所有表");
             System.out.println("  • 输入空行结束输入");
             System.out.print("> ");
+            System.out.flush(); // 强制刷新输出缓冲区
             
             List<String> inputLines = new ArrayList<>();
             String line;
@@ -230,6 +235,7 @@ public abstract class BaseGenerator {
                 }
                 inputLines.add(line);
                 System.out.print("> ");
+                System.out.flush(); // 强制刷新输出缓冲区
             }
             
             if (inputLines.isEmpty()) {
