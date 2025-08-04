@@ -6,7 +6,7 @@
 
     <groupId>io.github.stanxlab</groupId>
     <artifactId>codegen</artifactId>
-    <version>2.0.04</version>
+    <version>2.0.5</version>
     <packaging>maven-plugin</packaging>
     <name>codegen</name>
     <description>代码生成器maven插件，用于生成DAO模版代码，默认使用mybatis-mapper和PageHelper。</description>
@@ -21,19 +21,19 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <mysql-connector-java.version>8.0.25</mysql-connector-java.version>
-        <mybatis-plus.version>3.5.7</mybatis-plus.version>
-        <mybatis-plus-generator.version>3.5.7</mybatis-plus-generator.version>
-        <beetl.version>3.10.0.RELEASE</beetl.version>
+        <mybatis-plus.version>3.5.12</mybatis-plus.version>
+        <mybatis-plus-generator.version>3.5.12</mybatis-plus-generator.version>
+        <beetl.version>3.19.2.RELEASE</beetl.version>
         <velocity.version>2.3</velocity.version>
-        <freemarker.version>2.3.31</freemarker.version>
-        <hutool.version>5.8.2</hutool.version>
+        <freemarker.version>2.3.33</freemarker.version>
+        <hutool.version>5.8.39</hutool.version>
         <oshi-core.version>5.7.4</oshi-core.version>
         <snakeyaml.version>1.30</snakeyaml.version>
-        <fastjson.vsersion>2.0.51</fastjson.vsersion>
-        <lombok.version>1.18.22</lombok.version>
+        <fastjson.vsersion>2.0.58</fastjson.vsersion>
+        <lombok.version>1.18.30</lombok.version>
 
-        <maven-core.version>3.8.4</maven-core.version>
-        <maven-plugin-api.version>3.8.4</maven-plugin-api.version>
+        <maven-core.version>3.9.11</maven-core.version>
+        <maven-plugin-api.version>3.9.11</maven-plugin-api.version>
         <maven-plugin-annotations.version>3.6.4</maven-plugin-annotations.version>
     </properties>
     <dependencies>
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
+            <version>1.2.13</version>
         </dependency>
 
         <dependency>

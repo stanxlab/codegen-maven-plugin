@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ${package.Entity}.${entity};
 import ${package.Mapper}.${originalMapperName};
 import ${package.Service}.${table.serviceName};
-import ${superServiceImplClassPackage};
 import org.springframework.stereotype.Service;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 /**
